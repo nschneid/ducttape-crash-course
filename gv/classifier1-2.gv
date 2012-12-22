@@ -1,0 +1,17 @@
+digraph G {
+	node [label="\N"];
+	graph [rankdir="LR"];
+	"START" [label="", shape=plaintext];
+	"learn";
+	"predict";
+	"test" [shape=plaintext];
+	"eval";
+	"STOP" [label="", shape=plaintext];
+	"START" -> "learn" [label="train"];
+	"learn" -> "predict" [label="model"];
+	"test" -> "predict" ;
+	"predict" -> "eval" [label="preds"];
+	"test" -> "eval" ;
+	"eval" -> "STOP" [label="scores"];
+}
+

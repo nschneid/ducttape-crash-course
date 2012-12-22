@@ -1,0 +1,30 @@
+digraph G {
+	node [label="\N"];
+	graph [rankdir="LR"];
+	"START" [label="", shape=plaintext];
+	"learn";
+	"DUMMY" [label="", shape=plaintext];
+	"predict";
+	"preds" [label="", shape=plaintext, width=0];
+
+	"eval1" [label="eval(T=0.5)", color=red, fontcolor=red];
+	"eval2" [label="eval(T=0.75)", color=blue, fontcolor=blue];
+	"test" [shape=plaintext];
+	"STOP1" [label="", shape=plaintext];
+	"STOP2" [label="", shape=plaintext];
+	"START" -> "learn" [label="train"];
+	"DUMMY" -> "predict" [color=transparent];
+	"DUMMY" -> "eval1" [color=transparent];
+	"learn" -> "test" [color=transparent];
+	"learn" -> "predict" [label="model"];
+
+	"test" -> "predict";
+	"predict" -> "preds" [label="preds", arrowhead=none];
+	"preds" -> "eval1" [color=red];
+	"preds" -> "eval2" [color=blue];
+	"test" -> "eval1" [color=red];
+	"test" -> "eval2" [color=blue];
+	"eval1" -> "STOP1" [label="scores", color=red, fontcolor=red];
+	"eval2" -> "STOP2" [label="scores", color=blue, fontcolor=blue];
+}
+

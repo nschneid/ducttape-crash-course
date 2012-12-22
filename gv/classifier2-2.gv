@@ -1,0 +1,49 @@
+digraph G {
+	node [label="\N", ordering=out];
+	graph [rankdir="LR"];
+	"START" [label="", shape=plaintext];
+	"learn";
+	"model" [label="", height=0, width=0, shape=none];
+	"testpreds" [label="", height=0, width=0, shape=none];
+	"devpreds" [label="", height=0, width=0, shape=none];
+	"testpredict" [label="predict(in=test)", style=bold];
+	"devpredict" [label="predict(in=dev)", style=dashed];
+	"preds" [label="", shape=plaintext, width=0];
+	"eval1" [label="eval(gold=test, T=0.5)", color=red, fontcolor=red, style=bold];
+	"eval2" [label="eval(gold=test, T=0.75)", color=blue, fontcolor=blue, style=bold];
+	"eval3" [label="eval(gold=dev, T=0.5)", color=red, fontcolor=red, style=dashed];
+	"eval4" [label="eval(gold=dev, T=0.75)", color=blue, fontcolor=blue, style=dashed];
+	"dev" [shape=plaintext];
+	"test" [shape=plaintext];
+	"STOP1" [label="", shape=plaintext];
+	"STOP2" [label="", shape=plaintext];
+	"STOP3" [label="", shape=plaintext];
+	"STOP4" [label="", shape=plaintext];
+	"START" -> "learn" [label="train"];
+	"model" -> "test" [color=transparent];
+	"model" -> "testpredict" [style=bold];
+	"model" -> "devpredict" [style=dashed];
+	"model" -> "dev" [color=transparent];
+	"learn" -> "model" [label="model", arrowhead=none];
+	
+
+	"testpredict" -> "testpreds" [label="preds", style=bold];
+	"testpreds" -> "eval1" [color=red, style=bold];
+	"testpreds" -> "eval2" [color=blue, style=bold];
+	
+	"devpredict" -> "devpreds" [label="preds", style=dashed];
+	"devpreds" -> "eval3" [color=red, style=dashed];
+	"devpreds" -> "eval4" [color=blue, style=dashed];
+	
+	"test" -> "eval1" [color=red, style=bold];
+	"test" -> "testpredict" [style=bold];
+	"test" -> "eval2" [color=blue, style=bold];
+	"dev" -> "eval3" [color=red, style=dashed];
+	"dev" -> "devpredict" [style=dashed];
+	"dev" -> "eval4" [color=blue, style=dashed];
+	"eval1" -> "STOP1" [label="scores", color=red, fontcolor=red, style=bold];
+	"eval2" -> "STOP2" [label="scores", color=blue, fontcolor=blue, style=bold];
+	"eval3" -> "STOP3" [label="scores", color=red, fontcolor=red, style=dashed];
+	"eval4" -> "STOP4" [label="scores", color=blue, fontcolor=blue, style=dashed];
+}
+

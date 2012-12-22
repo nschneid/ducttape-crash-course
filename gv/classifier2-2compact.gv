@@ -1,0 +1,32 @@
+digraph G {
+	node [label="\N", ordering=out];
+	graph [rankdir="LR"];
+	"START" [label="", shape=plaintext];
+	"learn";
+	"devtest" [label="DevOrTest", shape=diamond];
+	"t1" [label="0.5", shape=plaintext, fontcolor=red];
+	"t2" [label="0.75", shape=plaintext, fontcolor=blue];
+	"thresh" [label="Threshold", shape=diamond];
+	"predict" [label="predict"];
+	"preds" [label="", shape=plaintext, width=0];
+	"eval" [label="eval"];
+	"dev" [shape=plaintext];
+	"test" [shape=plaintext];
+	"STOP" [label="", shape=plaintext];
+	"START" -> "learn" [label="train"];
+	"learn" -> "predict" [label="model", arrowhead=none];
+	"learn" -> "test" [style=invis];
+	
+	"test" -> "devtest" [style=bold];
+	"dev" -> "devtest" [style=dashed];
+	
+	"t1" -> "thresh" [color=red];
+	"t2" -> "thresh" [color=blue];
+
+	"devtest" -> "predict" [label="in"];
+	"predict" -> "eval" [label="preds"];
+	"devtest" -> "eval" [label="gold"];
+	"thresh" -> "eval" [label="T"];
+	"eval" -> "STOP" [label="scores"];
+}
+
