@@ -30,7 +30,8 @@
 </g>
 <!-- learn&#45;&gt;predict -->
 <g id="edge2" class="edge"><title>learn&#45;&gt;predict</title>
-<path fill="none" stroke="black" d="M173.594,-168.366C252.084,-169.408 476.508,-172.387 563.219,-173.538"/>
+<path fill="none" stroke="black" d="M173.594,-168.366C249.171,-169.37 460.052,-172.169 553.011,-173.403"/>
+<polygon fill="black" stroke="black" points="553.174,-176.905 563.219,-173.538 553.267,-169.906 553.174,-176.905"/>
 <text text-anchor="middle" x="302" y="-173.8" font-family="Times,serif" font-size="14.00">model</text>
 </g>
 <!-- test -->

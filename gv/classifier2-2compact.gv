@@ -14,7 +14,7 @@ digraph G {
 	"test" [shape=plaintext];
 	"STOP" [label="", shape=plaintext];
 	"START" -> "learn" [label="train"];
-	"learn" -> "predict" [label="model", arrowhead=none];
+	"learn" -> "predict" [label="model"];
 	"learn" -> "test" [style=invis];
 	
 	"test" -> "devtest" [style=bold];
