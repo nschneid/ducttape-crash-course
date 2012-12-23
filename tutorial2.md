@@ -7,7 +7,7 @@
 
 Recall the pipeline [workflow](classifier1-3.tape) from the previous section:
 
-<p style="text-align: center;"><img src="png/classifier1-2.png" style="height: 90px" title="Dependency graph for the classifier1-2.tape workflow. A global variable is used to share an input between two tasks." /></p>
+<p style="text-align: center;"><img src="svg/classifier1-2.svg" style="height: 90px" title="Dependency graph for the classifier1-2.tape workflow. A global variable is used to share an input between two tasks." /></p>
 
 The final task, `eval`, has a hardcoded threshold parameter `T`. But suppose we want to run the evaluation multiple times with different values for `T`. Duplicating the task to change only the value of `T` is undesirable, especially if many values need to be tested. Including a loop within the body of the task would put the onus on the user to keep track of many different outputs, while hiding the fact that the two variants can be run in parallel.
 
