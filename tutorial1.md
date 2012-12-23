@@ -19,7 +19,7 @@ In our example, the classifier will use labeled examples stored in a file called
 
 The tasks, inputs, and outputs in the workflow can be visualized as follows:
 
-<p style="text-align: center;"><img src="png/classifier1-1.png" style="height: 120px" title="Dependency graph for the classifier1-1.tape workflow. Nodes represent tasks and edges represent inputs/outputs." /></p>
+<p style="text-align: center;"><img src="svg/classifier1-1.svg" style="height: 120px" title="Dependency graph for the classifier1-1.tape workflow. Nodes represent tasks and edges represent inputs/outputs." /></p>
 
 ### The first task
 
@@ -283,7 +283,7 @@ global {
 
 and change the inputs of `predict` and `eval` to refer to `$evaldata`. The [modified workflow](classifier1-2.tape) can be depicted as follows:
 
-<p style="text-align: center;"><img src="png/classifier1-2.png" style="height: 90px" title="Dependency graph for the classifier1-2.tape workflow. A global variable is used to share an input between two tasks." /></p>
+<p style="text-align: center;"><img src="svg/classifier1-2.svg" style="height: 90px" title="Dependency graph for the classifier1-2.tape workflow. A global variable is used to share an input between two tasks." /></p>
 
 ### Task parameters
 

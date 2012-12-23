@@ -165,19 +165,19 @@ pre code {
 
 <p>The best solution is a <strong>HyperWorkflow</strong>, a workflow that specifies dimensions of variation in one or more tasks, implying multiple paths that can be taken to reach the end of the workflow. Each possible decision is called a <strong>branch</strong>. For instance, with <code>T</code> allowed to be <code>0.5</code> or <code>0.75</code> our graph becomes:</p>
 
-<p style="text-align: center;"><img src="png/classifier2-1.png" style="height: 150px" title="Realization graph for the classifier2-1.tape HyperWorkflow. Two realizations of the 'eval' task correspond to different values of the parameter 'T'." /></p>
+<p style="text-align: center;"><img src="svg/classifier2-1.svg" style="height: 150px" title="Realization graph for the classifier2-1.tape HyperWorkflow. Two realizations of the 'eval' task correspond to different values of the parameter 'T'." /></p>
 
 
 <p>Now the <code>eval</code> task has two variants, known in ducttape parlance as <strong>realizations</strong>, arrived at via the different branches of <code>T</code>. In this case the variants share the same file inputs but produce different outputs.</p>
 
 <p>In the above graph, <code>learn</code> and <code>predict</code> have only one realization each. But perhaps we want to run the second and third tasks on a development dataset as well as the test set, using the dev set to choose <code>T</code> and the test set to gauge final performance. Again, introducing near-copies of the <code>predict</code> and <code>eval</code> tasks would be cumbersome. Instead we introduce a second <strong>branch point</strong>, or bifurcation in the graph:</p>
 
-<p style="text-align: center;"><img src="png/classifier2-2.png" style="height: 250px" title="Realization graph for the classifier2-2.tape HyperWorkflow. There are two branch points, and four different realizations of the final task." /></p>
+<p style="text-align: center;"><img src="svg/classifier2-2.svg" style="height: 250px" title="Realization graph for the classifier2-2.tape HyperWorkflow. There are two branch points, and four different realizations of the final task." /></p>
 
 
 <p>This leaves 1 realization for the <code>learn</code> task, 2 for <code>predict</code>, and 4 for <code>eval</code>. A more compact depiction represents each branch point with a diamond node:</p>
 
-<p style="text-align: center;"><img src="png/classifier2-2compact.png" style="height: 230px" title="Branch point graph for the classifier2-2.tape HyperWorkflow." /></p>
+<p style="text-align: center;"><img src="svg/classifier2-2compact.svg" style="height: 230px" title="Branch point graph for the classifier2-2.tape HyperWorkflow." /></p>
 
 
 <p>From a branch point graph, the number of realizations of a given task can be calculated by taking the product of the in-degrees of all branch points that are ancestors of that task. (Note that even if <code>eval</code> did not depend directly on the <code>DevOrTest</code> branch point, it would still depend on it indirectly through the output of <code>predict</code>.)</p>

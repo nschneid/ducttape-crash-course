@@ -13,17 +13,17 @@ The final task, `eval`, has a hardcoded threshold parameter `T`. But suppose we 
 
 The best solution is a __HyperWorkflow__, a workflow that specifies dimensions of variation in one or more tasks, implying multiple paths that can be taken to reach the end of the workflow. Each possible decision is called a __branch__. For instance, with `T` allowed to be `0.5` or `0.75` our graph becomes:
 
-<p style="text-align: center;"><img src="png/classifier2-1.png" style="height: 150px" title="Realization graph for the classifier2-1.tape HyperWorkflow. Two realizations of the 'eval' task correspond to different values of the parameter 'T'." /></p>
+<p style="text-align: center;"><img src="svg/classifier2-1.svg" style="height: 150px" title="Realization graph for the classifier2-1.tape HyperWorkflow. Two realizations of the 'eval' task correspond to different values of the parameter 'T'." /></p>
 
 Now the `eval` task has two variants, known in ducttape parlance as __realizations__, arrived at via the different branches of `T`. In this case the variants share the same file inputs but produce different outputs.
 
 In the above graph, `learn` and `predict` have only one realization each. But perhaps we want to run the second and third tasks on a development dataset as well as the test set, using the dev set to choose `T` and the test set to gauge final performance. Again, introducing near-copies of the `predict` and `eval` tasks would be cumbersome. Instead we introduce a second __branch point__, or bifurcation in the graph: 
 
-<p style="text-align: center;"><img src="png/classifier2-2.png" style="height: 250px" title="Realization graph for the classifier2-2.tape HyperWorkflow. There are two branch points, and four different realizations of the final task." /></p>
+<p style="text-align: center;"><img src="svg/classifier2-2.svg" style="height: 250px" title="Realization graph for the classifier2-2.tape HyperWorkflow. There are two branch points, and four different realizations of the final task." /></p>
 
 This leaves 1 realization for the `learn` task, 2 for `predict`, and 4 for `eval`. A more compact depiction represents each branch point with a diamond node:
 
-<p style="text-align: center;"><img src="png/classifier2-2compact.png" style="height: 230px" title="Branch point graph for the classifier2-2.tape HyperWorkflow." /></p>
+<p style="text-align: center;"><img src="svg/classifier2-2compact.svg" style="height: 230px" title="Branch point graph for the classifier2-2.tape HyperWorkflow." /></p>
 
 From a branch point graph, the number of realizations of a given task can be calculated by taking the product of the in-degrees of all branch points that are ancestors of that task. (Note that even if `eval` did not depend directly on the `DevOrTest` branch point, it would still depend on it indirectly through the output of `predict`.)
 
