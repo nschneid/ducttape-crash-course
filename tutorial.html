@@ -154,7 +154,7 @@ pre code {
 
 <h3>2012-12-22</h3>
 
-<p>This is a tutorial for <strong><a href="https://github.com/jhclark/ducttape/">ducttape</a></strong>, a workflow management tool by <a href="http://www.cs.cmu.edu/~jhclark/">Jonathan Clark</a>. Parts are borrowed from his <a href="https://github.com/jhclark/ducttape/blob/master/tutorial/TUTORIAL.html">original tutorial</a>.</p>
+<p>This is a tutorial for <strong><a href="https://github.com/jhclark/ducttape/">ducttape</a></strong>, a workflow management tool by <a href="http://www.cs.cmu.edu/~jhclark/">Jonathan Clark</a>. Parts are based on his <a href="https://github.com/jhclark/ducttape/blob/master/tutorial/TUTORIAL.html">original tutorial</a>.</p>
 
 <h2>Who should use ducttape?</h2>
 
@@ -163,16 +163,50 @@ pre code {
 <h2>Contents</h2>
 
 <ul>
-<li><a href="tutorial0.html">0. Installation</a></li>
-<li><a href="tutorial1.html">1. Simple Workflows: Tasks and Dependencies</a></li>
-<li><a href="tutorial2.html">2. HyperWorkflows: Branching and Plans</a></li>
-<li><a href="tutorial3.html">3. Submitters</a></li>
-<li><a href="tutorial4.html">4. Versioning &amp; Packages</a></li>
-<li><a href="tutorial5.html">5. Grab Bag</a></li>
-<li><a href="tutorial6.html">6. Advanced Topics</a></li>
-<li><a href="tutorial7.html">7. Reference: Command Line Interface</a></li>
-<li><a href="tutorial8.html">8. Reference: Directory Structure</a></li>
-<li><a href="tutorial9.html">9. ducttape Development</a></li>
+<li><em><a href="https://github.com/jhclark/ducttape/blob/master/README.md#quick-start">Installation</a></em></li>
+<li><a href="tutorial1.html">1. Simple Workflows: Tasks and Dependencies</a> [draft]</li>
+<li><a href="tutorial2.html">2. HyperWorkflows: Branching and Plans</a> [draft]</li>
+<li><a href="tutorial3.html">3. Submitters</a> [TODO. wait until syntax stabilizes?]</li>
+<li><a href="tutorial4.html">4. Versioning &amp; Packages</a> [TODO]</li>
+<li><a href="tutorial5.html">5. Grab Bag</a> [TODO]
+
+<ul>
+<li>config files</li>
+<li>directives</li>
+<li>shorthand variable references</li>
+<li>sequence branch points</li>
+<li>branch grafting</li>
+<li>nested branch points</li>
+<li>the flat directory structure</li>
+<li>the attic</li>
+</ul>
+</li>
+<li><a href="tutorial6.html">6. Advanced Example</a> [TODO]
+
+<ul>
+<li>a preprocessing pipeline that can be run with different starting/ending points, in a scheduler?</li>
+</ul>
+</li>
+<li><a href="tutorial7.html">7. Reference: Command Line Interface</a> [TODO]</li>
+<li><a href="tutorial8.html">8. Reference: Directives</a> [TODO]</li>
+<li>Maybe: a section on modifying workflows after they've been run, including use of <code>invalidate</code> and <code>mark_valid</code>. What kinds of changes can ducttape cope with? Which changes would screw things up?
+
+<ul>
+<li>OK: adding new tasks that are not ancestors of current tasks; adding new branches after existing ones; adding new branch points where the first branch reflects current behavior; adding/modifying/removing plans</li>
+<li>Bad: renaming a task—it is treated as an entirely new task; removing branch points/branches that have been executed; changing whether an existing task is associated with an existing branch point</li>
+<li>OK with <code>invalidate</code>: change the body of a task; change the inputs, outputs, or parameters of a task
+
+<ul>
+<li>if a realization is invalidated, are all realizations that depend on it invalidated as well?</li>
+</ul>
+</li>
+<li>??: changing values for a task variable, with or without a branch point; inserting a task between two existing tasks in the dependency graph</li>
+<li>modifying a workflow while it is running</li>
+</ul>
+</li>
+<li><em><a href="https://github.com/jhclark/ducttape/blob/master/README.md#emacs-mode">Syntax Highlighting Plugins</a></em></li>
+<li><em><a href="https://github.com/jhclark/ducttape/blob/master/README.md#updates">Mailing Lists</a></em></li>
+<li><em><a href="https://github.com/jhclark/ducttape/blob/master/HACKING.md">ducttape Development</a></em></li>
 </ul>
 
 
