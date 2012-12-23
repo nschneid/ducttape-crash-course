@@ -1,5 +1,5 @@
-<p style="text-align: center;"><a href="tutorial.md">ducttape: A Crash Course</a>
-<a href="tutorial0.md" style="float: left;">&laquo; 1. Simple Workflows: Tasks and Dependencies</a></p>
+<p style="text-align: center;"><a href="tutorial.html">ducttape: A Crash Course</a>
+<a href="tutorial1.html" style="float: left;">&laquo; 1. Simple Workflows: Tasks and Dependencies</a></p>
 
 ## 2. HyperWorkflows: Branching and Plans
 
@@ -31,6 +31,7 @@ From a branch point graph, the number of realizations of a given task can be cal
 
 The two branch points described above are defined [as follows](classifier2-2.tape):
 
+<!--
 ```
 global {
     # 1st branch point: DevOrTest
@@ -54,6 +55,29 @@ task eval < gold=$evaldata preds=@predict > scores :: T=(Threshold: 0.5 0.75) {
 }
 
 ```
+-->
+<pre><b>global</b> {
+    <i># 1st branch point: DevOrTest</i>
+    <span style="color: #ff8000;">evaldata</span><span class="o">=(</span><span style="color: #00cc00;"><b>DevOrTest:</b> <span class="nb">test </span>dev</span><span class="o">)</span>
+}
+
+<b>task</b> <span style="color: #ff0080;">learn</span> &lt; <span style="color: #ff8000;">in</span>=<span style="color: #9866cc;">train</span> &gt; <span style="color: #ff8000;">model</span> {
+    ../../learner <span style="color: #ff8000;">$in</span> &gt; <span style="color: #ff8000;">$model</span>
+}
+
+<b>task</b> <span style="color: #ff0080;">predict</span> &lt; <span style="color: #ff8000;">in</span>=<span style="color: #ff8000;">$evaldata</span> <span style="color: #ff8000;">model</span>=<span style="color: #ff8000;">$model</span><span style="color: #ff0080;">@learn</span> &gt; <span style="color: #ff8000;">preds</span> {
+    ../../predictor <span style="color: #ff8000;">$model</span> &lt; <span style="color: #ff8000;">$in</span> &gt; <span style="color: #ff8000;">$preds</span>
+}
+
+<i># 2nd branch point: Threshold</i>
+<b>task</b> <span style="color: #ff0080;">eval</span> &lt; <span style="color: #ff8000;">gold</span>=<span style="color: #ff8000;">$evaldata</span> <span style="color: #ff8000;">preds</span>=<span style="color: #ff0080;">@predict</span> &gt; <span style="color: #ff8000;">scores</span> :: <span style="color: #ff8000;">T</span><span class="o">=(</span><span style="color: #00cc00;"><b>Threshold:</b> 0.5 0.75</span><span class="o">)</span> {
+    cut -f2 <span style="color: #ff8000;">$gold</span> &gt; temp
+    paste temp <span style="color: #ff8000;">$preds</span> &gt; gold_and_pred
+    rm temp
+    ../../evaluator <span style="color: #ff8000;">$T</span> gold_and_pred &gt; <span style="color: #ff8000;">$scores</span>
+}
+
+</pre>
 
 Each branch point is simply added on the right-hand side of a variable. `T=(Threshold: 0.5 0.75)` indicates that the second branch point, called `Threshold`, determines the value of the `T` parameter. The two branches are called `0.5` and `0.75`, respectively, and assign those values for `T`.[^fn1] 
 
@@ -87,6 +111,7 @@ If the workflow is executed and new branches are later added to the workflow, it
 
 Executing a HyperWorkflow entails making branching decisions. One option is to execute all possible combinations—the __full cross-product__ of branch points' branches, encompassing all realizations of all tasks—though as the branching complexity of the workflow grows, this quickly becomes intractable. Ducttape therefore allows the workflow designer to specify __plans__ targeting specific execution paths. These can go in the `.tape` file [alongside the workflow itself](classifier2-2.tape). For example:
 
+<!--
 ```
 plan CrossProduct {
     reach eval via (DevOrTest: *) * (Threshold: *)
@@ -100,6 +125,19 @@ plan LearnOnly {
     reach learn
 }
 ```
+-->
+<pre><b>plan</b> <span style="color: #0000ff;">CrossProduct</span> {
+    <b>reach</b> <span style="color: #ff0080;">eval</span> <b>via</b> (<span style="color: #00cc00;"><b>DevOrTest:</b></span> *) * (<span style="color: #00cc00;"><b>Threshold:</b></span> *)
+}
+
+<b>plan</b> <span style="color: #0000ff;">Tuning</span> {
+    <b>reach</b> <span style="color: #ff0080;">eval </span><b>via</b> <span class="o">(</span><span style="color: #00cc00;"><b>DevOrTest:</b> dev</span><span class="o">)</span> * <span class="o">(</span><span style="color: #00cc00;"><b>Threshold:</b></span> *<span class="o">)</span>
+}
+
+<b>plan</b> <span style="color: #0000ff;">LearnOnly</span> {
+    <b>reach</b> <span style="color: #ff0080;">learn</span>
+}
+</pre>
 
 Any of these plans can be selected when invoking the ducttape executable with the `-p` flag. The first indicates that all paths leading to the `eval` task should be explored.[^fn3]
 The second fixes the dev set as the prediction/evaluation dataset for parameter tuning; a new plan can be added and run later for the test set. The third plan is to run the `learn` task, then stop. (The subsequent steps could be run later.)
@@ -246,4 +284,4 @@ Executing the full __cross product__ of realizations is often impractical. __Pla
 
 This concludes our discussion of the fundamentals of ducttape workflows. The remaining sections contain additional features, examples, and tips. They are intended to be self-contained, so feel free to skip ahead to the sections that are most relevant to you.
 
-<p style="text-align: right"><a href="tutorial2.md">3. Submitters &raquo;</a>
+<p style="text-align: right"><a href="tutorial3.html">3. Submitters &raquo;</a>

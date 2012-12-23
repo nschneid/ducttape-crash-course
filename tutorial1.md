@@ -1,5 +1,5 @@
-<p style="text-align: center;"><a href="tutorial.md">ducttape: A Crash Course</a>
-<a href="tutorial0.md" style="float: left;">&laquo; 0. Installation</a></p>
+<p style="text-align: center;"><a href="tutorial.html">ducttape: A Crash Course</a>
+<a href="tutorial0.html" style="float: left;">&laquo; 0. Installation</a></p>
 
 ## 1. Simple Workflows: Tasks and Dependencies
 
@@ -25,11 +25,18 @@ The tasks, inputs, and outputs in the workflow can be visualized as follows:
 
 To start our workflow, we fire up a text editor and create a file called `classifier.tape` with the following:
 
+<!--
 ```
 task learn < in=train > model {
     ../../learner $in > $model
 }
 ```
+-->
+<pre><b>task</b> <span style="color: #ff0080;">learn</span> &lt; <span style="color: #ff8000;">in</span>=<span style="color: #9866cc;">train</span> &gt; <span style="color: #ff8000;">model</span> {
+    ../../learner <span style="color: #ff8000;">$in</span> &gt; <span style="color: #ff8000;">$model</span>
+}
+</pre>
+
 
 This defines the `learn` task. Every task consists of a __header__—a line starting with `task`—and a __body__ containing bash commands.
 
@@ -43,6 +50,7 @@ The task __body__ is simply a bash command invoking an executable. By default, t
 
 Now we add two more tasks:
 
+<!--
 ```
 task predict < in=test model=$model@learn > preds {
     ../../predictor $model < $in > $preds
@@ -55,6 +63,18 @@ task eval < gold=test preds=@predict > scores {
     ../../evaluator gold_and_pred > $scores
 }
 ```
+-->
+<pre><b>task</b> <span style="color: #ff0080;">predict</span> &lt; <span style="color: #ff8000;">in</span>=<span style="color: #9866cc;">test</span> <span style="color: #ff8000;">model</span>=<span style="color: #ff8000;">$model</span><span style="color: #ff0080;">@learn</span> &gt; <span style="color: #ff8000;">preds</span> {
+    ../../predictor <span style="color: #ff8000;">$model</span> &lt; <span style="color: #ff8000;">$in</span> &gt; <span style="color: #ff8000;">$preds</span>
+}
+
+<b>task</b> <span style="color: #ff0080;">eval</span> &lt; <span style="color: #ff8000;">gold</span>=<span style="color: #9866cc;">test</span> <span style="color: #ff8000;">preds</span>=<span style="color: #ff0080;">@predict</span> &gt; <span style="color: #ff8000;">scores</span> {
+    cut -f2 <span style="color: #ff8000;">$gold</span> &gt; temp
+    paste temp <span style="color: #ff8000;">$preds</span> &gt; gold_and_pred
+    rm temp
+    ../../evaluator gold_and_pred &gt; <span style="color: #ff8000;">$scores</span>
+}
+</pre>
 
 The `predict` task follows the same general pattern as `learn` did. This time there are two inputs, the second of which is the output of `learn`! The expression `model=$model@learn` defines the local (input) variable `model` and assigns to it the value of the `model` variable from the `learn` task. This implicates the entire `learn` task as a dependency of `predict`; ducttape will never start executing `predict` until `learn` has completed successfully.
 
@@ -147,7 +167,7 @@ Work plan:
 Are you sure you want to run these 3 tasks? [y/n]
 </div>
 
-Here ducttape indicates which tasks it plans to run. A subdirectory of the current working directory is created for each task, and within each of those is a subdirectory called `Baseline.baseline` from which the task will be run (the reason for this extra subdirectory will become clear in [the next section](tutorial2.md)). Enter `y` at the prompt to continue.
+Here ducttape indicates which tasks it plans to run. A subdirectory of the current working directory is created for each task, and within each of those is a subdirectory called `Baseline.baseline` from which the task will be run (the reason for this extra subdirectory will become clear in [the next section](tutorial2.html)). Enter `y` at the prompt to continue.
 
 <div style="white-space: pre-wrap; background-color: #111; color: #eee; padding: 1em; font-family: monaco,consolas,monospace;">
 Retreiving code and building...
@@ -242,18 +262,24 @@ Some important things to keep in mind:
 * Ducttape is capable of running __multiple tasks of a workflow in parallel__ (provided their dependencies have been satisfied). To enable this, specify the maximum number of simultaneous jobs with the `-j` flag: `ducttape <tape-file> -j5` will result in up to 5 tasks running at once.
     - If one of these jobs fails, ducttape will display a failure message but continue running other tasks that do not depend on the failed task. If you want to fix the problem and redo the failed task without interrupting other tasks that are running, you will need to use a new ducttape instance.
 * __TODO: anything other crucial notes about the environment?__
-* See [3. Submitters](tutorial3.md) for running tasks as jobs in a scheduler.
-* See [5. Grab Bag](tutorial5.md) for what to do if you have started running a workflow and need to change it or rerun tasks that completed successfully.
+* See [3. Submitters](tutorial3.html) for running tasks as jobs in a scheduler.
+* See [5. Grab Bag](tutorial5.html) for what to do if you have started running a workflow and need to change it or rerun tasks that completed successfully.
 
 ### Global variables
 
 Notice that two tasks—`predict` and `eval`—contain the same hardcoded input file (`test`). This duplication is not ideal; better to use a variable in case the file path needs to be changed. Workflows may define __global variables__ for this purpose: we simply add
 
+<!--
 ```
 global {
     evaldata=test
 }
 ```
+-->
+<pre><b>global</b> {
+    <span style="color: #ff0080;">evaldata</span>=<span style="color: #9866cc;">test</span>
+}
+</pre>
 
 and change the inputs of `predict` and `eval` to refer to `$evaldata`. The [modified workflow](classifier1-2.tape) can be depicted as follows:
 
@@ -263,6 +289,7 @@ and change the inputs of `predict` and `eval` to refer to `$evaldata`. The [modi
 
 Often it is desirable to associate metadata other than files and directories with a task. For example, suppose the evaluation step is parameterized by a numeric threshold value that will cause some of the predictions to be ignored. Rather than hard-coding it in the task body, we can set this threshold in the task header with an auxiliary variable called a __parameter__:
 
+<!--
 ```
 task eval < gold=$evaldata preds=@predict > scores :: T=0.5 {
     cut -f2 $gold > temp
@@ -271,12 +298,20 @@ task eval < gold=$evaldata preds=@predict > scores :: T=0.5 {
     ../../evaluator $T gold_and_pred > $scores
 }
 ```
+-->
+<pre><b>task</b> <span style="color: #ff0080;">eval</span> &lt; <span style="color: #ff8000;">gold</span>=<span style="color: #ff8000;">$evaldata</span> <span style="color: #ff8000;">preds</span>=<span style="color: #ff0080;">@predict</span> &gt; <span style="color: #ff8000;">scores</span> :: <span style="color: #ff8000;">T</span>=<span style="color: #9866cc;">0.5</span> {
+    cut -f2 <span style="color: #ff8000;">$gold</span> &gt; temp
+    paste temp <span style="color: #ff8000;">$preds</span> &gt; gold_and_pred
+    rm temp
+    ../../evaluator <span style="color: #ff8000;">$T</span> gold_and_pred &gt; <span style="color: #ff8000;">$scores</span>
+}
+</pre>
 
 The `::` operator after the outputs introduces the parameters. Here we call the threshold `T` and assign it a value of `0.5`. It can be used in the body as a bash variable just like the input and output variables.
 
 _The modified workflow is [here](classifier1-3.tape)._
 
-You may ask: What if I want to try different values of `T`? The answer appears in the [next section](tutorial2.md), which introduces ducttape's killer feature: HyperWorkflows.
+You may ask: What if I want to try different values of `T`? The answer appears in the [next section](tutorial2.html), which introduces ducttape's killer feature: HyperWorkflows.
 
 ### Summary
 
@@ -284,4 +319,4 @@ A ducttape __workflow__ organizes a set of __tasks__, atomic units of execution 
 
 The command line tool statically checks and then executes a workflow, waiting until a task has completed successfully before starting tasks that depend on it. Failures due to invalid input paths or unsuccessful bash commands are caught early. If the workflow structure and runtime options allow, multiple tasks will be executed in parallel. Output files and metadata such as stdout/stderr logs are placed in a designated directory for each task.
 
-<p style="text-align: right"><a href="tutorial2.md">2. HyperWorkflows: Branching and Plans &raquo;</a>
+<p style="text-align: right"><a href="tutorial2.html">2. HyperWorkflows: Branching and Plans &raquo;</a>

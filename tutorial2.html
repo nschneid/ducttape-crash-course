@@ -1,0 +1,462 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<style>
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", Arial, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    color: #737373;
+    background-color: white;
+    margin: 10px 13px 10px 13px;
+}
+table {
+	margin: 10px 0 15px 0;
+	border-collapse: collapse;
+}
+td,th {	
+	border: 1px solid #ddd;
+	padding: 3px 10px;
+}
+th {
+	padding: 5px 10px;	
+}
+
+a {
+    color: #0069d6;
+}
+a:hover {
+    color: #0050a3;
+    text-decoration: none;
+}
+a img {
+    border: none;
+}
+p {
+    margin-bottom: 9px;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #404040;
+    line-height: 36px;
+}
+h1 {
+    margin-bottom: 18px;
+    font-size: 30px;
+}
+h2 {
+    font-size: 24px;
+}
+h3 {
+    font-size: 18px;
+}
+h4 {
+    font-size: 16px;
+}
+h5 {
+    font-size: 14px;
+}
+h6 {
+    font-size: 13px;
+}
+hr {
+    margin: 0 0 19px;
+    border: 0;
+    border-bottom: 1px solid #ccc;
+}
+blockquote {
+    padding: 13px 13px 21px 15px;
+    margin-bottom: 18px;
+    font-family:georgia,serif;
+    font-style: italic;
+}
+blockquote:before {
+    content:"\201C";
+    font-size:40px;
+    margin-left:-10px;
+    font-family:georgia,serif;
+    color:#eee;
+}
+blockquote p {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 18px;
+    margin-bottom: 0;
+    font-style: italic;
+}
+code, pre {
+    font-family: Monaco, Andale Mono, Courier New, monospace;
+}
+code {
+    background-color: #fee9cc;
+    color: rgba(0, 0, 0, 0.75);
+    padding: 1px 3px;
+    font-size: 12px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+pre {
+    display: block;
+    padding: 14px;
+    margin: 0 0 18px;
+    line-height: 16px;
+    font-size: 11px;
+    border: 1px solid #d9d9d9;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+pre code {
+    background-color: #fff;
+    color:#737373;
+    font-size: 11px;
+    padding: 0;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:10px auto;
+    }
+}
+@media print {
+	body,code,pre code,h1,h2,h3,h4,h5,h6 {
+		color: black;
+	}
+	table, pre {
+		page-break-inside: avoid;
+	}
+}
+</style>
+<title>2. HyperWorkflows: Branching and Plans</title>
+
+</head>
+<body>
+<p style="text-align: center;"><a href="tutorial.html">ducttape: A Crash Course</a>
+<a href="tutorial1.html" style="float: left;">&laquo; 1. Simple Workflows: Tasks and Dependencies</a></p>
+
+
+<h2>2. HyperWorkflows: Branching and Plans</h2>
+
+<h3>Encoding task variants with branches</h3>
+
+<p>Recall the pipeline <a href="classifier1-3.tape">workflow</a> from the previous section:</p>
+
+<p style="text-align: center;"><img src="png/classifier1-2.png" style="height: 90px" title="Dependency graph for the classifier1-2.tape workflow. A global variable is used to share an input between two tasks." /></p>
+
+
+<p>The final task, <code>eval</code>, has a hardcoded threshold parameter <code>T</code>. But suppose we want to run the evaluation multiple times with different values for <code>T</code>. Duplicating the task to change only the value of <code>T</code> is undesirable, especially if many values need to be tested. Including a loop within the body of the task would put the onus on the user to keep track of many different outputs, while hiding the fact that the two variants can be run in parallel.</p>
+
+<p>The best solution is a <strong>HyperWorkflow</strong>, a workflow that specifies dimensions of variation in one or more tasks, implying multiple paths that can be taken to reach the end of the workflow. Each possible decision is called a <strong>branch</strong>. For instance, with <code>T</code> allowed to be <code>0.5</code> or <code>0.75</code> our graph becomes:</p>
+
+<p style="text-align: center;"><img src="png/classifier2-1.png" style="height: 150px" title="Realization graph for the classifier2-1.tape HyperWorkflow. Two realizations of the 'eval' task correspond to different values of the parameter 'T'." /></p>
+
+
+<p>Now the <code>eval</code> task has two variants, known in ducttape parlance as <strong>realizations</strong>, arrived at via the different branches of <code>T</code>. In this case the variants share the same file inputs but produce different outputs.</p>
+
+<p>In the above graph, <code>learn</code> and <code>predict</code> have only one realization each. But perhaps we want to run the second and third tasks on a development dataset as well as the test set, using the dev set to choose <code>T</code> and the test set to gauge final performance. Again, introducing near-copies of the <code>predict</code> and <code>eval</code> tasks would be cumbersome. Instead we introduce a second <strong>branch point</strong>, or bifurcation in the graph:</p>
+
+<p style="text-align: center;"><img src="png/classifier2-2.png" style="height: 250px" title="Realization graph for the classifier2-2.tape HyperWorkflow. There are two branch points, and four different realizations of the final task." /></p>
+
+
+<p>This leaves 1 realization for the <code>learn</code> task, 2 for <code>predict</code>, and 4 for <code>eval</code>. A more compact depiction represents each branch point with a diamond node:</p>
+
+<p style="text-align: center;"><img src="png/classifier2-2compact.png" style="height: 230px" title="Branch point graph for the classifier2-2.tape HyperWorkflow." /></p>
+
+
+<p>From a branch point graph, the number of realizations of a given task can be calculated by taking the product of the in-degrees of all branch points that are ancestors of that task. (Note that even if <code>eval</code> did not depend directly on the <code>DevOrTest</code> branch point, it would still depend on it indirectly through the output of <code>predict</code>.)</p>
+
+<h3>Defining branch points</h3>
+
+<p>The two branch points described above are defined <a href="classifier2-2.tape">as follows</a>:</p>
+
+<!--
+```
+global {
+    # 1st branch point: DevOrTest
+    evaldata=(DevOrTest: test dev)
+}
+
+task learn < in=train > model {
+    ../../learner $in > $model
+}
+
+task predict < in=$evaldata model=$model@learn > preds {
+    ../../predictor $model < $in > $preds
+}
+
+# 2nd branch point: Threshold
+task eval < gold=$evaldata preds=@predict > scores :: T=(Threshold: 0.5 0.75) {
+    cut -f2 $gold > temp
+    paste temp $preds > gold_and_pred
+    rm temp
+    ../../evaluator $T gold_and_pred > $scores
+}
+
+```
+-->
+
+
+<pre><b>global</b> {
+    <i># 1st branch point: DevOrTest</i>
+    <span style="color: #ff8000;">evaldata</span><span class="o">=(</span><span style="color: #00cc00;"><b>DevOrTest:</b> <span class="nb">test </span>dev</span><span class="o">)</span>
+}
+
+<b>task</b> <span style="color: #ff0080;">learn</span> &lt; <span style="color: #ff8000;">in</span>=<span style="color: #9866cc;">train</span> &gt; <span style="color: #ff8000;">model</span> {
+    ../../learner <span style="color: #ff8000;">$in</span> &gt; <span style="color: #ff8000;">$model</span>
+}
+
+<b>task</b> <span style="color: #ff0080;">predict</span> &lt; <span style="color: #ff8000;">in</span>=<span style="color: #ff8000;">$evaldata</span> <span style="color: #ff8000;">model</span>=<span style="color: #ff8000;">$model</span><span style="color: #ff0080;">@learn</span> &gt; <span style="color: #ff8000;">preds</span> {
+    ../../predictor <span style="color: #ff8000;">$model</span> &lt; <span style="color: #ff8000;">$in</span> &gt; <span style="color: #ff8000;">$preds</span>
+}
+
+<i># 2nd branch point: Threshold</i>
+<b>task</b> <span style="color: #ff0080;">eval</span> &lt; <span style="color: #ff8000;">gold</span>=<span style="color: #ff8000;">$evaldata</span> <span style="color: #ff8000;">preds</span>=<span style="color: #ff0080;">@predict</span> &gt; <span style="color: #ff8000;">scores</span> :: <span style="color: #ff8000;">T</span><span class="o">=(</span><span style="color: #00cc00;"><b>Threshold:</b> 0.5 0.75</span><span class="o">)</span> {
+    cut -f2 <span style="color: #ff8000;">$gold</span> &gt; temp
+    paste temp <span style="color: #ff8000;">$preds</span> &gt; gold_and_pred
+    rm temp
+    ../../evaluator <span style="color: #ff8000;">$T</span> gold_and_pred &gt; <span style="color: #ff8000;">$scores</span>
+}
+
+</pre>
+
+
+<p>Each branch point is simply added on the right-hand side of a variable. <code>T=(Threshold: 0.5 0.75)</code> indicates that the second branch point, called <code>Threshold</code>, determines the value of the <code>T</code> parameter. The two branches are called <code>0.5</code> and <code>0.75</code>, respectively, and assign those values for <code>T</code>.<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup></p>
+
+<p>A single branch point can be used by multiple tasks/variables of the workflow: <code>DevOrTest</code> is shared by <code>predict</code> and <code>eval</code> via a global variable.<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup></p>
+
+<h3>Realization names</h3>
+
+<p>When running a realization (task variant), ducttape creates a directory under the task directory. The realization name consists of each branch point (<em>not</em> variable) name coupled with its branch name (<em>not</em> value, if they differ). For example, files for the realization of <code>eval</code> in which <code>T=0.75</code> and <code>gold=dev</code> would go in the directory <code>eval/DevOrTest.dev+Threshold.0.75</code>.</p>
+
+<p>The realization consisting of the first branch of every branch point affecting the task is called the Baseline realization. The directory name for this realization is always <code>Baseline.baseline</code>. Other realizations are named in terms of their deviation from the baseline. This is to make it easy to add a new branch point—possibly by factoring out part of the task into a new variable!—without invalidating or obscuring the results obtained so far, so long as the existing configuration is maintained in the first branch of the new branch point.</p>
+
+<p>The six realizations in our example would be named as follows:</p>
+
+<ul>
+<li><code>learn</code> would go in <code>learn/Baseline.baseline</code></li>
+<li><code>predict(in=test)</code> would go in <code>predict/Baseline.baseline</code></li>
+<li><code>predict(in=dev)</code> would go in <code>predict/DevOrTest.dev</code></li>
+<li><code>eval(gold=test, T=0.5)</code> would go in <code>eval/Baseline.baseline</code></li>
+<li><code>eval(gold=test, T=0.75)</code> would go in <code>eval/Threshold.0.75</code></li>
+<li><code>eval(gold=dev, T=0.5)</code> would go in <code>eval/DevOrTest.dev</code></li>
+<li><code>eval(gold=dev, T=0.75)</code> would go in <code>eval/DevOrTest.dev+Threshold.0.75</code></li>
+</ul>
+
+
+<p>The third, fifth, and sixth of these are known as <strong>one-off</strong> realizations because they differ from the Baseline in only one way.</p>
+
+<p>If the workflow is executed and new branches are later added to the workflow, it is important not to change the first branch of any branch point, because that is known in existing results only as being part of the Baseline!</p>
+
+<h3>Charting a path through the HyperWorkflow</h3>
+
+<p>Executing a HyperWorkflow entails making branching decisions. One option is to execute all possible combinations—the <strong>full cross-product</strong> of branch points' branches, encompassing all realizations of all tasks—though as the branching complexity of the workflow grows, this quickly becomes intractable. Ducttape therefore allows the workflow designer to specify <strong>plans</strong> targeting specific execution paths. These can go in the <code>.tape</code> file <a href="classifier2-2.tape">alongside the workflow itself</a>. For example:</p>
+
+<!--
+```
+plan CrossProduct {
+    reach eval via (DevOrTest: *) * (Threshold: *)
+}
+
+plan Tuning {
+    reach eval via (DevOrTest: dev) * (Threshold: *)
+}
+
+plan LearnOnly {
+    reach learn
+}
+```
+-->
+
+
+<pre><b>plan</b> <span style="color: #0000ff;">CrossProduct</span> {
+    <b>reach</b> <span style="color: #ff0080;">eval</span> <b>via</b> (<span style="color: #00cc00;"><b>DevOrTest:</b></span> *) * (<span style="color: #00cc00;"><b>Threshold:</b></span> *)
+}
+
+<b>plan</b> <span style="color: #0000ff;">Tuning</span> {
+    <b>reach</b> <span style="color: #ff0080;">eval </span><b>via</b> <span class="o">(</span><span style="color: #00cc00;"><b>DevOrTest:</b> dev</span><span class="o">)</span> * <span class="o">(</span><span style="color: #00cc00;"><b>Threshold:</b></span> *<span class="o">)</span>
+}
+
+<b>plan</b> <span style="color: #0000ff;">LearnOnly</span> {
+    <b>reach</b> <span style="color: #ff0080;">learn</span>
+}
+</pre>
+
+
+<p>Any of these plans can be selected when invoking the ducttape executable with the <code>-p</code> flag. The first indicates that all paths leading to the <code>eval</code> task should be explored.<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>
+The second fixes the dev set as the prediction/evaluation dataset for parameter tuning; a new plan can be added and run later for the test set. The third plan is to run the <code>learn</code> task, then stop. (The subsequent steps could be run later.)</p>
+
+<p>If no plans are defined for the workflow, ducttape will explore all Baseline and one-off realizations.</p>
+
+<p>If plans <em>are</em> defined, but the <code>-p</code> flag is not provided, ducttape will explore the union of all the plans' realizations.</p>
+
+<h3>Example plan execution</h3>
+
+<p>Having defined three plans <a href="classifier2-2.tape">with our workflow</a>, in a fresh directory with only the <code>.tape</code> file and the required inputs/executables, we first invoke the <code>LearnOnly</code> plan:</p>
+
+<div style="white-space: pre-wrap; background-color: #111; color: #eee; padding: 1em; font-family: monaco,consolas,monospace;">
+$ ducttape classifier2-2.tape -p LearnOnly
+ducttape 0.2.1
+By Jonathan Clark
+Have 1 previous workflow versions
+Finding hyperpaths contained in plan...
+Finding vertices for plan: LearnOnly
+Have 3 candidate tasks matching plan's realizations: eval learn predict
+Found 1 realizations of goal task learn: Baseline.baseline
+Found 1 vertices implied by realization plan LearnOnly
+Union of all planned vertices has size 1
+Planned 1 vertices
+Checking for completed steps...
+Task incomplete learn/Baseline.baseline: No previous output
+Finding packages...
+Found 0 packages
+Checking for already built packages...
+Checking inputs...
+Work plan:
+<span style="color: #0f0;">RUN:</span> /usr0/nschneid/./<span style="color: cyan">learn</span>/<span style="color: blue">Baseline.baseline</span>
+Are you sure you want to run these 1 tasks? [y/n] y
+Retreiving code and building...
+Moving previous partial output to the attic...
+Executing tasks...
+Acquiring lock for learn/Baseline.baseline
+Running learn/Baseline.baseline in /usr0/nschneid/./learn/Baseline.baseline
+Using submitter shell
+Completed learn/Baseline.baseline
+</div>
+
+
+<p>Then the <code>Tuning</code> plan, which takes advantage of the output from the first:</p>
+
+<div style="white-space: pre-wrap; background-color: #111; color: #eee; padding: 1em; font-family: monaco,consolas,monospace;">
+$ ducttape classifier2-2.tape -p Tuning
+ducttape 0.2.1
+By Jonathan Clark
+Have 4 previous workflow versions
+Finding hyperpaths contained in plan...
+Finding vertices for plan: Tuning
+Have 4 candidate tasks matching plan's realizations: eval learn predict
+Found 2 realizations of goal task eval: DevOrTest.dev+Threshold.0.75 DevOrTest.dev
+Found 4 vertices implied by realization plan Tuning
+Union of all planned vertices has size 4
+Planned 4 vertices
+Checking for completed steps...
+Task incomplete predict/DevOrTest.dev: No previous output
+Task incomplete eval/DevOrTest.dev: No previous output
+Task incomplete eval/DevOrTest.dev+Threshold.0.75: No previous output
+Finding packages...
+Found 0 packages
+Checking for already built packages...
+Checking inputs...
+Work plan:
+<span style="color: #0f0;">RUN</span>: /usr0/nschneid/./<span style="color: cyan">predict</span>/<span style="color: blue">DevOrTest.dev</span>
+<span style="color: #0f0;">RUN</span>: /usr0/nschneid/./<span style="color: cyan">eval</span>/<span style="color: blue">DevOrTest.dev</span>
+<span style="color: #0f0;">RUN</span>: /usr0/nschneid/./<span style="color: cyan">eval</span>/<span style="color: blue">DevOrTest.dev+Threshold.0.75</span>
+Are you sure you want to run these 3 tasks? [y/n] y
+Retreiving code and building...
+Moving previous partial output to the attic...
+Executing tasks...
+Acquiring lock for predict/DevOrTest.dev
+Running predict/DevOrTest.dev in /usr0/nschneid/./predict/DevOrTest.dev
+Using submitter shell
+Completed predict/DevOrTest.dev
+Acquiring lock for eval/DevOrTest.dev
+Running eval/DevOrTest.dev in /usr0/nschneid/./eval/DevOrTest.dev
+Using submitter shell
+Completed eval/DevOrTest.dev
+Acquiring lock for eval/DevOrTest.dev+Threshold.0.75
+Running eval/DevOrTest.dev+Threshold.0.75 in /usr0/nschneid/./eval/DevOrTest.dev+Threshold.0.75
+Using submitter shell
+Completed eval/DevOrTest.dev+Threshold.0.75
+EXITING: Cleaning up lock files...
+</div>
+
+
+<p>And finally, <code>CrossProduct</code>, which ensures all realizations are covered—3 of which remain:</p>
+
+<div style="white-space: pre-wrap; background-color: #111; color: #eee; padding: 1em; font-family: monaco,consolas,monospace;">
+$ ducttape classifier2-2.tape -p CrossProduct
+ducttape 0.2.1
+By Jonathan Clark
+Have 5 previous workflow versions
+Finding hyperpaths contained in plan...
+Finding vertices for plan: CrossProduct
+Have 7 candidate tasks matching plan's realizations: eval learn predict
+Found 4 realizations of goal task eval: Baseline.baseline DevOrTest.dev+Threshold.0.75 Threshold.0.75 DevOrTest.dev
+Found 7 vertices implied by realization plan CrossProduct
+Union of all planned vertices has size 7
+Planned 7 vertices
+Checking for completed steps...
+Task incomplete predict/Baseline.baseline: No previous output
+Task incomplete eval/Baseline.baseline: No previous output
+Task incomplete eval/Threshold.0.75: No previous output
+Finding packages...
+Found 0 packages
+Checking for already built packages...
+Checking inputs...
+Work plan:
+<span style="color: #0f0;">RUN</span>: /usr0/nschneid/./<span style="color: cyan">predict</span>/<span style="color: blue">Baseline.baseline</span>
+<span style="color: #0f0;">RUN</span>: /usr0/nschneid/./<span style="color: cyan">eval</span>/<span style="color: blue">Baseline.baseline</span>
+<span style="color: #0f0;">RUN</span>: /usr0/nschneid/./<span style="color: cyan">eval</span>/<span style="color: blue">Threshold.0.75</span>
+Are you sure you want to run these 3 tasks? [y/n] y
+Retreiving code and building...
+Moving previous partial output to the attic...
+Executing tasks...
+Acquiring lock for predict/Baseline.baseline
+Running predict/Baseline.baseline in /usr0/nschneid/./predict/Baseline.baseline
+Using submitter shell
+Completed predict/Baseline.baseline
+Acquiring lock for eval/Baseline.baseline
+Running eval/Baseline.baseline in /usr0/nschneid/./eval/Baseline.baseline
+Using submitter shell
+Completed eval/Baseline.baseline
+Acquiring lock for eval/Threshold.0.75
+Running eval/Threshold.0.75 in /usr0/nschneid/./eval/Threshold.0.75
+Using submitter shell
+Completed eval/Threshold.0.75
+EXITING: Cleaning up lock files...
+</div>
+
+
+<p>And that's the ballgame!</p>
+
+<h3>Summary</h3>
+
+<p>Variables in a task header may be defined with multiple alternative values. This means the task has multiple variants, called <strong>realizations</strong>. There are then multiple ways to execute a workflow, following paths in the realization graph. A path corresponds to a choice of a <strong>branch</strong> for each <strong>branch point</strong> associated with one or more tasks on the path. The <strong>Baseline</strong> realization of each task follows the first branch of every associated branch point. Other realizations are desribed by their deviation from the Baseline, which gives the workflow designer flexibility to add complexity to the workflow after running it.</p>
+
+<p>Executing the full <strong>cross product</strong> of realizations is often impractical. <strong>Plan</strong> definitions describe sets of realization paths and can be selected individually for execution with the <code>-p</code> flag. If no plans are defined, ducttape defaults to executing all Baselines as well as <strong>one-off</strong> realizations deviating from the Baseline in only one branch. Once a realization for a task has been executed successfully, it will be considered complete for the current plan as well as any overlapping plan that is run at a later time.</p>
+
+<h3>What's next</h3>
+
+<p>This concludes our discussion of the fundamentals of ducttape workflows. The remaining sections contain additional features, examples, and tips. They are intended to be self-contained, so feel free to skip ahead to the sections that are most relevant to you.</p>
+
+<p><p style="text-align: right"><a href="tutorial3.html">3. Submitters &raquo;</a></p>
+<div class="footnotes">
+<hr/>
+<ol>
+<li id="fn:1">
+<p>The mapping from branch names to values can be specific to the variable being assigned. <code>T=(Threshold: a=0.5 b=0.75)</code> would mean the branch called <code>a</code> assigns the value <code>0.5</code> to <code>T</code> in this task, and likewise for branch <code>b</code> and value <code>0.75</code>. <strong>(TODO: what if two branches have the same value for a variable? does the task get run twice with the same value?)</strong><a href="#fnref:1" rev="footnote">&#8617;</a></p></li>
+<li id="fn:2">
+<p>When a branch point occurs in multiple places, the branch <em>names</em> must be consistent but their <em>values</em> can differ. E.g., a task in the above workflow could specify an additional input <code>absolute_path=(DevOrTest: test=/path/to/test dev=/path/to/dev)</code><a href="#fnref:2" rev="footnote">&#8617;</a></p></li>
+<li id="fn:3">
+<p>The beginning of a plan expression is a comma-separated list of tasks to be reached. Any dependencies of these tasks are implicit; in this case <code>eval</code> is equivalent to <code>eval, predict, learn</code>. The wildcard <code>*</code> after a branch point name is equivalent to listing all of its branches. A single plan may contain multiple plan expressions, on separate lines.<a href="#fnref:3" rev="footnote">&#8617;</a></p></li>
+</ol>
+</div>
+
+</body>
+</html>
