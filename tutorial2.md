@@ -76,7 +76,6 @@ task eval < gold=$evaldata preds=@predict > scores :: T=(Threshold: 0.5 0.75) {
     rm temp
     ../../evaluator <span style="color: #ff8000;">$T</span> gold_and_pred &gt; <span style="color: #ff8000;">$scores</span>
 }
-
 </pre>
 
 Each branch point is simply added on the right-hand side of a variable. `T=(Threshold: 0.5 0.75)` indicates that the second branch point, called `Threshold`, determines the value of the `T` parameter. The two branches are called `0.5` and `0.75`, respectively, and assign those values for `T`.[^fn1] 
