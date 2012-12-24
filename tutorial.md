@@ -4,7 +4,11 @@
 
 This is a tutorial for **[ducttape](https://github.com/jhclark/ducttape/)**, a workflow management tool by [Jonathan Clark](http://www.cs.cmu.edu/~jhclark/). Parts are based on his [original tutorial](https://github.com/jhclark/ducttape/blob/master/tutorial/TUTORIAL.html).
 
+Cat pictures are from the Internet.
+
 ## Who should use ducttape?
+
+<p style="position: relative;"><img src="cats/ducttape.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
 
 motivation blah blah
 

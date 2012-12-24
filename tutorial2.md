@@ -5,6 +5,8 @@
 
 ### Encoding task variants with branches
 
+<p style="position: relative;"><img src="cats/hyper.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
+
 Recall the pipeline [workflow](classifier1-3.tape) from the previous section:
 
 <p style="text-align: center;"><img src="svg/classifier1-2.svg" style="height: 90px" title="Dependency graph for the classifier1-2.tape workflow. A global variable is used to share an input between two tasks." /></p>
@@ -28,6 +30,8 @@ This leaves 1 realization for the `learn` task, 2 for `predict`, and 4 for `eval
 From a branch point graph, the number of realizations of a given task can be calculated by taking the product of the in-degrees of all branch points that are ancestors of that task. (Note that even if `eval` did not depend directly on the `DevOrTest` branch point, it would still depend on it indirectly through the output of `predict`.)
 
 ### Defining branch points
+
+<p style="position: relative;"><img src="cats/tree.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
 
 The two branch points described above are defined [as follows](classifier2-2.tape):
 
@@ -88,6 +92,8 @@ A single branch point can be used by multiple tasks/variables of the workflow: `
 
 ### Realization names
 
+<p style="position: relative;"><img src="cats/plans.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
+
 When running a realization (task variant), ducttape creates a directory under the task directory. The realization name consists of each branch point (_not_ variable) name coupled with its branch name (_not_ value, if they differ). For example, files for the realization of `eval` in which `T=0.75` and `gold=dev` would go in the directory `eval/DevOrTest.dev+Threshold.0.75`.
 
 The realization consisting of the first branch of every branch point affecting the task is called the Baseline realization. The directory name for this realization is always `Baseline.baseline`. Other realizations are named in terms of their deviation from the baseline. This is to make it easy to add a new branch point—possibly by factoring out part of the task into a new variable!—without invalidating or obscuring the results obtained so far, so long as the existing configuration is maintained in the first branch of the new branch point.
@@ -107,6 +113,8 @@ The third, fifth, and sixth of these are known as __one-off__ realizations becau
 If the workflow is executed and new branches are later added to the workflow, it is important not to change the first branch of any branch point, because that is known in existing results only as being part of the Baseline!
 
 ### Charting a path through the HyperWorkflow
+
+<p style="position: relative;"><img src="cats/planning.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
 
 Executing a HyperWorkflow entails making branching decisions. One option is to execute all possible combinations—the __full cross-product__ of branch points' branches, encompassing all realizations of all tasks—though as the branching complexity of the workflow grows, this quickly becomes intractable. Ducttape therefore allows the workflow designer to specify __plans__ targeting specific execution paths. These can go in the `.tape` file [alongside the workflow itself](classifier2-2.tape). For example:
 
@@ -148,6 +156,8 @@ If no plans are defined for the workflow, ducttape will explore all Baseline and
 If plans _are_ defined, but the `-p` flag is not provided, ducttape will explore the union of all the plans' realizations.
 
 ### Example plan execution
+
+<p style="position: relative;"><img src="cats/planb.jpg" style="position: absolute; left: 101%; height: 190px;" /></p>
 
 Having defined three plans [with our workflow](classifier2-2.tape), in a fresh directory with only the `.tape` file and the required inputs/executables, we first invoke the `LearnOnly` plan:
 

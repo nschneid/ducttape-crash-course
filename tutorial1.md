@@ -23,6 +23,8 @@ The tasks, inputs, and outputs in the workflow can be visualized as follows:
 
 ### The first task
 
+<p style="position: relative;"><img src="cats/searching.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
+
 To start our workflow, we fire up a text editor and create a file called `classifier.tape` with the following:
 
 <!--
@@ -47,6 +49,8 @@ After the inputs are the operator `>` and the __outputs__. This task defines a s
 The task __body__ is simply a bash command invoking an executable. By default, the body will be run from a sub-sub-directory of the execution directory, so we refer to the executable with the appropriate relative path. (An absolute path would work also.) The argument to the executable is the value of input variable `$in` (which will contain the file path `train`); the executable's output is redirected to the location stored in the output variable `$model`, which in this case will simply be a file called `model`.
 
 ### Tasks with dependencies
+
+<p style="position: relative;"><img src="cats/proceed.jpg" style="position: absolute; left: 101%; height: 140px;" /></p>
 
 Now we add two more tasks:
 
@@ -85,6 +89,8 @@ The final task, `eval`, is defined in a similar manner. It depends on the output
 _Congratulations—you've completed your first workflow! The result can be seen [here](classifier1-1.tape)._
 
 ### Running the workflow
+
+<p style="position: relative;"><img src="cats/inevitable.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
 
 Once the tasks are defined, it's time to debug and execute the workflow. This is done on the command line with the `ducttape` executable. Simply provide the path to your `.tape` file:
 
@@ -144,6 +150,8 @@ All input paths that do not refer to an output of a previous task are checked pr
 
 ### Running the workflow, for real
 
+<p style="position: relative;"><img src="cats/working.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
+
 Having worked through the bugs, here's how we execute the [workflow](classifier1-1.tape), assuming that the input files `train` and `test` are present in the current working directory:
 
 <div style="white-space: pre-wrap; background-color: #111; color: #eee; padding: 1em; font-family: monaco,consolas,monospace;">
@@ -193,6 +201,8 @@ Completed eval/Baseline.baseline
 The workflow is now complete! Output (along with some task metadata) will be found in the `eval/Baseline.baseline` directory.
 
 ### Problems during execution
+
+<p style="position: relative;"><img src="cats/status.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
 
 Here is what would happen if we had included the `learner` executable but forgotten to include the `predictor` executable:
 
@@ -252,6 +262,8 @@ EXITING: Cleaning up lock files...
 This deletes any partial output from the failed task, reruns it, and then continues onto the `eval` task to complete the workflow.
 
 ### Notes about execution
+
+<p style="position: relative;"><img src="cats/progress.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
 
 Some important things to keep in mind:
 
