@@ -233,7 +233,6 @@ task eval < gold=$evaldata preds=@predict > scores :: T=(Threshold: 0.5 0.75) {
     rm temp
     ../../evaluator <span style="color: #ff8000;">$T</span> gold_and_pred &gt; <span style="color: #ff8000;">$scores</span>
 }
-
 </pre>
 
 
