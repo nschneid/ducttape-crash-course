@@ -178,6 +178,9 @@ pre code {
 
 <h3>The first task</h3>
 
+<p style="position: relative;"><img src="cats/searching.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
+
+
 <p>To start our workflow, we fire up a text editor and create a file called <code>classifier.tape</code> with the following:</p>
 
 <!--
@@ -204,6 +207,9 @@ task learn < in=train > model {
 <p>The task <strong>body</strong> is simply a bash command invoking an executable. By default, the body will be run from a sub-sub-directory of the execution directory, so we refer to the executable with the appropriate relative path. (An absolute path would work also.) The argument to the executable is the value of input variable <code>$in</code> (which will contain the file path <code>train</code>); the executable's output is redirected to the location stored in the output variable <code>$model</code>, which in this case will simply be a file called <code>model</code>.</p>
 
 <h3>Tasks with dependencies</h3>
+
+<p style="position: relative;"><img src="cats/proceed.jpg" style="position: absolute; left: 101%; height: 140px;" /></p>
+
 
 <p>Now we add two more tasks:</p>
 
@@ -245,6 +251,9 @@ task eval < gold=test preds=@predict > scores {
 <p><em>Congratulations—you've completed your first workflow! The result can be seen <a href="classifier1-1.tape">here</a>.</em></p>
 
 <h3>Running the workflow</h3>
+
+<p style="position: relative;"><img src="cats/inevitable.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
+
 
 <p>Once the tasks are defined, it's time to debug and execute the workflow. This is done on the command line with the <code>ducttape</code> executable. Simply provide the path to your <code>.tape</code> file:</p>
 
@@ -308,6 +317,9 @@ task learn < in=trainn > model {
 
 <h3>Running the workflow, for real</h3>
 
+<p style="position: relative;"><img src="cats/working.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
+
+
 <p>Having worked through the bugs, here's how we execute the <a href="classifier1-1.tape">workflow</a>, assuming that the input files <code>train</code> and <code>test</code> are present in the current working directory:</p>
 
 <div style="white-space: pre-wrap; background-color: #111; color: #eee; padding: 1em; font-family: monaco,consolas,monospace;">
@@ -359,6 +371,9 @@ Completed eval/Baseline.baseline
 <p>The workflow is now complete! Output (along with some task metadata) will be found in the <code>eval/Baseline.baseline</code> directory.</p>
 
 <h3>Problems during execution</h3>
+
+<p style="position: relative;"><img src="cats/status.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
+
 
 <p>Here is what would happen if we had included the <code>learner</code> executable but forgotten to include the <code>predictor</code> executable:</p>
 
@@ -420,6 +435,9 @@ EXITING: Cleaning up lock files...
 <p>This deletes any partial output from the failed task, reruns it, and then continues onto the <code>eval</code> task to complete the workflow.</p>
 
 <h3>Notes about execution</h3>
+
+<p style="position: relative;"><img src="cats/progress.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
+
 
 <p>Some important things to keep in mind:</p>
 

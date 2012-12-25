@@ -156,6 +156,9 @@ pre code {
 
 <h3>Encoding task variants with branches</h3>
 
+<p style="position: relative;"><img src="cats/hyper.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
+
+
 <p>Recall the pipeline <a href="classifier1-3.tape">workflow</a> from the previous section:</p>
 
 <p style="text-align: center;"><img src="svg/classifier1-2.svg" style="height: 90px" title="Dependency graph for the classifier1-2.tape workflow. A global variable is used to share an input between two tasks." /></p>
@@ -183,6 +186,9 @@ pre code {
 <p>From a branch point graph, the number of realizations of a given task can be calculated by taking the product of the in-degrees of all branch points that are ancestors of that task. (Note that even if <code>eval</code> did not depend directly on the <code>DevOrTest</code> branch point, it would still depend on it indirectly through the output of <code>predict</code>.)</p>
 
 <h3>Defining branch points</h3>
+
+<p style="position: relative;"><img src="cats/tree.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
+
 
 <p>The two branch points described above are defined <a href="classifier2-2.tape">as follows</a>:</p>
 
@@ -242,6 +248,9 @@ task eval < gold=$evaldata preds=@predict > scores :: T=(Threshold: 0.5 0.75) {
 
 <h3>Realization names</h3>
 
+<p style="position: relative;"><img src="cats/plans.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
+
+
 <p>When running a realization (task variant), ducttape creates a directory under the task directory. The realization name consists of each branch point (<em>not</em> variable) name coupled with its branch name (<em>not</em> value, if they differ). For example, files for the realization of <code>eval</code> in which <code>T=0.75</code> and <code>gold=dev</code> would go in the directory <code>eval/DevOrTest.dev+Threshold.0.75</code>.</p>
 
 <p>The realization consisting of the first branch of every branch point affecting the task is called the Baseline realization. The directory name for this realization is always <code>Baseline.baseline</code>. Other realizations are named in terms of their deviation from the baseline. This is to make it easy to add a new branch point—possibly by factoring out part of the task into a new variable!—without invalidating or obscuring the results obtained so far, so long as the existing configuration is maintained in the first branch of the new branch point.</p>
@@ -264,6 +273,9 @@ task eval < gold=$evaldata preds=@predict > scores :: T=(Threshold: 0.5 0.75) {
 <p>If the workflow is executed and new branches are later added to the workflow, it is important not to change the first branch of any branch point, because that is known in existing results only as being part of the Baseline!</p>
 
 <h3>Charting a path through the HyperWorkflow</h3>
+
+<p style="position: relative;"><img src="cats/planning.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
+
 
 <p>Executing a HyperWorkflow entails making branching decisions. One option is to execute all possible combinations—the <strong>full cross-product</strong> of branch points' branches, encompassing all realizations of all tasks—though as the branching complexity of the workflow grows, this quickly becomes intractable. Ducttape therefore allows the workflow designer to specify <strong>plans</strong> targeting specific execution paths. These can go in the <code>.tape</code> file <a href="classifier2-2.tape">alongside the workflow itself</a>. For example:</p>
 
@@ -306,6 +318,9 @@ The second fixes the dev set as the prediction/evaluation dataset for parameter 
 <p>If plans <em>are</em> defined, but the <code>-p</code> flag is not provided, ducttape will explore the union of all the plans' realizations.</p>
 
 <h3>Example plan execution</h3>
+
+<p style="position: relative;"><img src="cats/planb.jpg" style="position: absolute; left: 101%; height: 190px;" /></p>
+
 
 <p>Having defined three plans <a href="classifier2-2.tape">with our workflow</a>, in a fresh directory with only the <code>.tape</code> file and the required inputs/executables, we first invoke the <code>LearnOnly</code> plan:</p>
 
