@@ -96,7 +96,9 @@ A single branch point can be used by multiple tasks/variables of the workflow: `
 
 When running a realization (task variant), ducttape creates a directory under the task directory. The realization name consists of each branch point (_not_ variable) name coupled with its branch name (_not_ value, if they differ). For example, files for the realization of `eval` in which `T=0.75` and `gold=dev` would go in the directory `eval/DevOrTest.dev+Threshold.0.75`.
 
-The realization consisting of the first branch of every branch point affecting the task is called the Baseline realization. The directory name for this realization is always `Baseline.baseline`. Other realizations are named in terms of their deviation from the baseline. This is to make it easy to add a new branch point—possibly by factoring out part of the task into a new variable!—without invalidating or obscuring the results obtained so far, so long as the existing configuration is maintained in the first branch of the new branch point.
+The realization consisting of the first branch of every branch point affecting the task is called the Baseline realization. The directory name for this realization is always `Baseline.baseline`. Other realizations are named in terms of their deviation from the baseline.[^fnsymlink] This is to make it easy to add a new branch point—possibly by factoring out part of the task into a new variable!—without invalidating or obscuring the results obtained so far, so long as the existing configuration is maintained in the first branch of the new branch point.
+
+[^fnsymlink]: If a task has multiple realizations, a symlink with the full realization name (containing the branch name for every branch point) will point to the directory named in terms of deviation from the baseline.
 
 The six realizations in our example would be named as follows:
 

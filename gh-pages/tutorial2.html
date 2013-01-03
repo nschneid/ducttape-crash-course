@@ -253,7 +253,7 @@ task eval < gold=$evaldata preds=@predict > scores :: T=(Threshold: 0.5 0.75) {
 
 <p>When running a realization (task variant), ducttape creates a directory under the task directory. The realization name consists of each branch point (<em>not</em> variable) name coupled with its branch name (<em>not</em> value, if they differ). For example, files for the realization of <code>eval</code> in which <code>T=0.75</code> and <code>gold=dev</code> would go in the directory <code>eval/DevOrTest.dev+Threshold.0.75</code>.</p>
 
-<p>The realization consisting of the first branch of every branch point affecting the task is called the Baseline realization. The directory name for this realization is always <code>Baseline.baseline</code>. Other realizations are named in terms of their deviation from the baseline. This is to make it easy to add a new branch point—possibly by factoring out part of the task into a new variable!—without invalidating or obscuring the results obtained so far, so long as the existing configuration is maintained in the first branch of the new branch point.</p>
+<p>The realization consisting of the first branch of every branch point affecting the task is called the Baseline realization. The directory name for this realization is always <code>Baseline.baseline</code>. Other realizations are named in terms of their deviation from the baseline.<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup> This is to make it easy to add a new branch point—possibly by factoring out part of the task into a new variable!—without invalidating or obscuring the results obtained so far, so long as the existing configuration is maintained in the first branch of the new branch point.</p>
 
 <p>The six realizations in our example would be named as follows:</p>
 
@@ -310,7 +310,7 @@ plan LearnOnly {
 </pre>
 
 
-<p>Any of these plans can be selected when invoking the ducttape executable with the <code>-p</code> flag. The first indicates that all paths leading to the <code>eval</code> task should be explored.<sup id="fnref:3"><a href="#fn:3" rel="footnote">3</a></sup>
+<p>Any of these plans can be selected when invoking the ducttape executable with the <code>-p</code> flag. The first indicates that all paths leading to the <code>eval</code> task should be explored.<sup id="fnref:4"><a href="#fn:4" rel="footnote">4</a></sup>
 The second fixes the dev set as the prediction/evaluation dataset for parameter tuning; a new plan can be added and run later for the test set. The third plan is to run the <code>learn</code> task, then stop. (The subsequent steps could be run later.)</p>
 
 <p>If no plans are defined for the workflow, ducttape will explore all Baseline and one-off realizations.</p>
@@ -468,7 +468,9 @@ EXITING: Cleaning up lock files...
 <li id="fn:2">
 <p>When a branch point occurs in multiple places, the branch <em>names</em> must be consistent but their <em>values</em> can differ. E.g., a task in the above workflow could specify an additional input <code>absolute_path=(DevOrTest: test=/path/to/test dev=/path/to/dev)</code><a href="#fnref:2" rev="footnote">&#8617;</a></p></li>
 <li id="fn:3">
-<p>The beginning of a plan expression is a comma-separated list of tasks to be reached. Any dependencies of these tasks are implicit; in this case <code>eval</code> is equivalent to <code>eval, predict, learn</code>. The wildcard <code>*</code> after a branch point name is equivalent to listing all of its branches. A single plan may contain multiple plan expressions, on separate lines.<a href="#fnref:3" rev="footnote">&#8617;</a></p></li>
+<p>If a task has multiple realizations, a symlink with the full realization name (containing the branch name for every branch point) will point to the directory named in terms of deviation from the baseline.<a href="#fnref:3" rev="footnote">&#8617;</a></p></li>
+<li id="fn:4">
+<p>The beginning of a plan expression is a comma-separated list of tasks to be reached. Any dependencies of these tasks are implicit; in this case <code>eval</code> is equivalent to <code>eval, predict, learn</code>. The wildcard <code>*</code> after a branch point name is equivalent to listing all of its branches. A single plan may contain multiple plan expressions, on separate lines.<a href="#fnref:4" rev="footnote">&#8617;</a></p></li>
 </ol>
 </div>
 
