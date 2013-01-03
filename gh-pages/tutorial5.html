@@ -1,0 +1,277 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<style>
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", Arial, sans-serif;
+    font-size: 13px;
+    line-height: 18px;
+    color: #737373;
+    background-color: white;
+    margin: 10px 13px 10px 13px;
+}
+table {
+	margin: 10px 0 15px 0;
+	border-collapse: collapse;
+}
+td,th {	
+	border: 1px solid #ddd;
+	padding: 3px 10px;
+}
+th {
+	padding: 5px 10px;	
+}
+
+a {
+    color: #0069d6;
+}
+a:hover {
+    color: #0050a3;
+    text-decoration: none;
+}
+a img {
+    border: none;
+}
+p {
+    margin-bottom: 9px;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #404040;
+    line-height: 36px;
+}
+h1 {
+    margin-bottom: 18px;
+    font-size: 30px;
+}
+h2 {
+    font-size: 24px;
+}
+h3 {
+    font-size: 18px;
+}
+h4 {
+    font-size: 16px;
+}
+h5 {
+    font-size: 14px;
+}
+h6 {
+    font-size: 13px;
+}
+hr {
+    margin: 0 0 19px;
+    border: 0;
+    border-bottom: 1px solid #ccc;
+}
+blockquote {
+    padding: 13px 13px 21px 15px;
+    margin-bottom: 18px;
+    font-family:georgia,serif;
+    font-style: italic;
+}
+blockquote:before {
+    content:"\201C";
+    font-size:40px;
+    margin-left:-10px;
+    font-family:georgia,serif;
+    color:#eee;
+}
+blockquote p {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 18px;
+    margin-bottom: 0;
+    font-style: italic;
+}
+code, pre {
+    font-family: Monaco, Andale Mono, Courier New, monospace;
+}
+code {
+    background-color: #fee9cc;
+    color: rgba(0, 0, 0, 0.75);
+    padding: 1px 3px;
+    font-size: 12px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+pre {
+    display: block;
+    padding: 14px;
+    margin: 0 0 18px;
+    line-height: 16px;
+    font-size: 11px;
+    border: 1px solid #d9d9d9;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+pre code {
+    background-color: #fff;
+    color:#737373;
+    font-size: 11px;
+    padding: 0;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:10px auto;
+    }
+}
+@media print {
+	body,code,pre code,h1,h2,h3,h4,h5,h6 {
+		color: black;
+	}
+	table, pre {
+		page-break-inside: avoid;
+	}
+}
+</style>
+<title>5. Grab Bag</title>
+
+</head>
+<body>
+<p style="text-align: center;"><a href="tutorial.html">ducttape: A Crash Course</a>
+<a href="tutorial4.html" style="float: left;">&laquo; 4. Versioning &amp; Packages</a></p>
+
+
+<h2>5. Grab Bag</h2>
+
+<p>This section addresses miscellaneous ducttape features that may prove useful.</p>
+
+<h3></h3>
+
+<pre><code>config files
+directives
+shorthand variable references
+the flat directory structure
+the attic
+</code></pre>
+
+<h3>Sequence branch points</h3>
+
+<p>Branches may be expressed as a range of integers using the <code>..</code> operator:</p>
+
+<pre><code>task run_several_times &gt; x :: trial=(WhichTrial: 1..10) {
+  # Use bash's built-in random number generator
+  echo $RANDOM &gt; $x
+}
+</code></pre>
+
+<p>This creates 10 branches of the <code>WhichTrial</code> branch point.</p>
+
+<h3>Nested branch points</h3>
+
+<p>Sometimes it is useful to encode hierarchical interactions between multiple branch points. For instance, imagine a cross-validation setup where a prediction step needs to be run for each of 4 folds in development and each of 8 folds at test time. We assume the data for each fold is in a separate file. We wish to encode the prediction mode as <code>dev</code> or <code>test</code> in a branch point for experimental convenience. This can be expressed succinctly:</p>
+
+<pre><code>task predict &lt; in=(DevOrTest: dev=(DevFold: d1 d2 d3 d4)
+                             test=(TestFold: t1 t2 t3 t4 t5 t6 t7 t8)) 
+             &gt; out { … }
+</code></pre>
+
+<p>Here, a different nested branch point obtains depending on the branch of the outer branch point, <code>DevOrTest</code>. We can then define two plans, one targeting the dev set and one targeting the test set, without having to repeat the names of the individual folds.</p>
+
+<p>An alternate strategy would be to use nested sequence branch points:</p>
+
+<pre><code>task predict &lt; indir=(DevOrTest: dev=/path/to/dev test=/path/to/test) 
+             &gt; out
+            :: fold=(DevOrTest: dev=(Fold: 1..4) test=(Fold: 1..8)) { … }
+</code></pre>
+
+<p>In this case the nested branch points have the same name, but different numbers of branches. (In general, they could have different branch names and/or values.) A disadvantage of this approach is that ducttape will check only for the directories containing the input files, not the files themselves: the full filename will have to be assembled in the body of the task by combining <code>$indir</code> and <code>$fold</code>.</p>
+
+<h3>Branch grafting</h3>
+
+<p>As noted in <a href="tutorial2.html">section 2</a>, plans may be used to select execution paths in a HyperWorkflow with many paths, especially if it would be intractable to execute all possible paths. In some cases, however, it is desirable to have a task whose <em>inputs</em> are limited to certain branches.</p>
+
+<p>For example, a machine learning workflow might have a <code>predict</code> task that operates separately on dev and test datasets—each with its own branch—and a subsequent <code>tune</code> task that uses its output, but only applies to the dev set. We can sketch these two tasks as follows:</p>
+
+<pre><code>task predict &lt; in=(DevOrTest: dev=dev.txt test=test.txt) &gt; out { … }
+
+task tune &lt; in=$out@predict[DevOrTest:dev] &gt; out { … }
+</code></pre>
+
+<p>The <strong>branch grafting</strong> notation <code>[DevOrTest:dev]</code> expresses that the input from an upstream task is limited to a particular branch—the <code>dev</code> branch of the <code>DevOrTest</code> branch point. No realization of the <code>tune</code> task will be created for the <code>test</code> branch.<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup></p>
+
+<h4>Advanced branch grafting</h4>
+
+<p>The general behavior of branch grafting is difficult to explain, but we will give an informal description and a few examples.</p>
+
+<p>Consider two tasks, <em>t</em> and <em>t′</em>, in a dependency relationship established by an input variable <em>v</em> in the header of <em>t′</em>. Suppose the upstream task <em>t</em> defines a branch point <em>B</em>. There are two scenarios:</p>
+
+<ul>
+<li>The input variable <em>v</em> establishes an <em>unqualified dependency</em> between the tasks. Each branch of <em>B</em> can instantiate its own realizations of both <em>t</em> and <em>t′</em>. For any given realization, the branch is the same across unqualified or locally defined instances of a branch point.</li>
+<li>The input variable <em>v</em> establishes a <em>qualified dependency</em> via grafting. A particular branch of <em>B</em> is indicated for that variable. This branch restriction affects <em>v</em> only, and filters the posible realizations of <em>t′</em> insofar as <em>v</em> is constrained to depend on a subset of possible realizations of the upstream taks <em>t</em>.</li>
+</ul>
+
+
+<p>The following workflow is a simple 2-task pipeline with 3 variants of the downstream task:</p>
+
+<pre><code>task t1 &lt; in=(B: a b) &gt; out1 out2 { … }
+
+task t2-par &lt; in1=$out1@t1 in2=$out2@t1 { … }
+
+task t2-zee &lt; in1=$out1@t1 in2=$out2@t1[B:b] { … }
+
+task t2-vee &lt; in1=$out1@t1[B:a] in2=$out2@t1[B:b] { … }
+</code></pre>
+
+<p>Both of the inputs in <code>t2-par</code> form unqualified dependencies on <code>t1</code>. <code>t2-zee</code> and <code>t2-vee</code> use branch grafting to form qualified dependencies. We depict the three dependency structures as follows:</p>
+
+<div style="text-align: center; min-height: 200px;"><div style="position: relative; display: inline-block; height: 200px; width: 215px;"><img src="svg/grafting1.svg" style="height: 200px; left: -90px; clip: rect(0px,305px,200px,90px); position: absolute;" /></div><div style="position: relative; display: inline-block; height: 200px; width: 230px;"><img src="svg/grafting2.svg" style="height: 190px; left: -90px; clip: rect(0px,320px,190px,90px); position: absolute;" /></div><div style="position: relative; display: inline-block; height: 200px; width: 240px;"><img src="svg/grafting3.svg" style="height: 170px; left: -90px; clip: rect(0px,330px,180px,90px); position: absolute;" /></div></div>
+
+
+<p>Each realization node is shown with the task name and realization name (<em>BL</em> stands for Baseline.baseline). The diagrams make clear that the grafting in the <em>zee</em> and <em>vee</em> structures does not merely filter the allowed realizations relative to the fully unqualified dependencies (<em>parallel</em>): here the grafting actually imposes "cross-branch" or "mixed-branch" dependencies.</p>
+
+<h4>Another advanced example</h4>
+
+<p>The grafting mechanism is powerful enough to allow fairly baroque workflows, such as the following:</p>
+
+<pre><code>task t1 &lt; in=(B: a b) &gt; out { … }
+
+task t2 &lt; in=$out@t1[B:a] &gt; out :: Q=(X: x y) { … }
+
+task t3 &lt; in1=$out@t1 in2=$out@t2 &gt; out { … }
+
+task t4 &lt; in1=$out@t3[B:b,X:y] in2=$out@t2[X:x] :: Q=(B: a b) { … }
+</code></pre>
+
+<p style="text-align: center"><img src="svg/grafting4.svg" style="height: 260px;" /></p>
+
+
+<p>TODO: advanced branch grafts example in next section</p>
+
+<p>TODO: interaction b/w grafting and nesting of branch points?</p>
+
+<p>TODO: disjunction of branches?</p>
+
+<p>TODO: is it possible for the <code>tune</code> step to access <em>multiple</em> outputs of the eval step at once? Kind of like a reduce step?</p>
+
+<p><p style="text-align: right"><a href="tutorial6.html">6. Advanced Example &raquo;</a></p>
+<div class="footnotes">
+<hr/>
+<ol>
+<li id="fn:1">
+<p>This use case of restricting the paths followed could also be accomplished with a plan, though this is not true of all uses of branch grafting.<a href="#fnref:1" rev="footnote">&#8617;</a></p></li>
+</ol>
+</div>
+
+</body>
+</html>

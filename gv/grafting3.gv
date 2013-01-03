@@ -1,0 +1,20 @@
+digraph G {
+	node [label="\N", ordering=out];
+	graph [rankdir="LR", label=<<U><I>vee</I></U>>, labelloc=t, nodesep=.9];
+	
+	"START" [label="", shape=plaintext];
+	"STOP" [label="", shape=plaintext];
+	
+	"t1a" [label="t1/BL(in=a)", color=red, fontcolor=red];
+	"t1b" [label="t1/B.b(in=b)", color=blue, fontcolor=blue];
+	"t2" [label="t2/BL"];
+
+	"START" -> "t1a" [style=invis];
+	"START" -> "t1b" [style=invis];
+
+	"t1b" -> "t2" [taillabel="out2", headlabel="in2", color=blue, fontcolor=blue, fontsize=10, labeldistance=2.5, labelangle=-20];
+	"t1a" -> "t2" [taillabel="out1", headlabel="in1", color=red, fontcolor=red, fontsize=10, labeldistance=2.5, labelangle=20];
+
+	"t2" -> "STOP" [style=invis];
+}
+

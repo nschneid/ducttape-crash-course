@@ -1,0 +1,84 @@
+/*
+task t1 < in=(B: a b) > out { … }
+
+task t2 < in=$out@t1[B:a] > out :: Q=(X: x y) { … }
+
+task t3 < in1$out@t1 in2=$out@t2 > out { … }
+
+task t4 < in1=$out@t3[B:b, X:y] in2=$out@t2[X:x] :: Q=(B: a b) { … }
+
+*/
+
+digraph G {
+	node [label="\N"];
+	graph [rankdir="LR", nodesep=.2];
+	edge [fontsize=10, labeldistance=2];
+	
+	"DUMMYTOPLEFT" [label="", shape=plaintext];
+	"START" [label="", shape=plaintext];
+	"STOP" [label="", shape=plaintext];
+	
+	
+	
+	"t1a" [label="t1/BL(in=a)", color=red, fontcolor=red];
+	"t1b" [label="t1/B.b(in=b)", color=blue, fontcolor=blue];
+	"t2x" [label="t2/BL(Q=x)", style=bold];
+	"t2y" [label="t2/X.y(Q=y)", style=dashed];
+	"t3ax" [label="t3/BL"];
+	"t3ay" [label="t3/X.y"];
+	"t3bx" [label="t3/B.b"];
+	"t3by" [label="t3/B.b+X.y"];
+	"t4a" [label="t4/BL(Q=a)"];
+	"t4b" [label="t4/B.b(Q=b)"];
+	"t2xOUT" [label="", shape=plaintext, height=0, width=0];
+	"t2yOUT" [label="", shape=plaintext, height=0, width=0];
+
+	"START" -> "DUMMYTOPLEFT" [style=invis];
+	"START" -> "t1a" [style=invis];
+	"START" -> "t1b" [style=invis];
+	
+	"t2x" -> "t2y" [style=invis];
+
+	"DUMMYTOPLEFT" -> "t2x" [style=invis];
+	
+	edge [color=red, fontcolor=red];
+	"t1a" -> "t2x" [headlabel="in", sametail=x1, constraint=false];
+	"t1a" -> "t2y" [headlabel="in", sametail=x1, constraint=false];
+	
+	"t1a" -> "t3ax" [headlabel="in1", sametail=x1];
+	"t1a" -> "t3ay" [headlabel="in1", sametail=x1, constraint=false];
+	
+	edge [color=black, fontcolor=black];
+	"t3ax" -> "t3ay" [style=invis];
+	"t1b" -> "t3bx" [headlabel="in1", sametail=x1, color=blue, fontcolor=blue];
+	"t1b" -> "t3by" [headlabel="in1", sametail=x1, constraint=false, color=blue, fontcolor=blue];
+	"t3bx" -> "t3by" [style=invis];
+	
+	edge [style=bold];
+	"t2x" -> "t2xOUT" [arrowhead=none, constraint=false];
+	"DUMMYTOPLEFT" -> "t2xOUT" [style=invis];
+	"t2xOUT" -> "t3bx" [headlabel="in2", constraint=false];
+	"t2xOUT" -> "t3ax" [headlabel="in2", constraint=false]; 
+	
+	edge [style=dashed];
+	"t2y" -> "t2yOUT" [arrowhead=none, constraint=false];
+	"t2xOUT" -> "t2yOUT" [style=invis];
+	"t2yOUT" -> "t3ay" [headlabel="in2", constraint=false];
+	"t2yOUT" -> "t3by" [headlabel="in2", sametail=x3, constraint=false];
+	
+	edge [style=solid];
+	"t3by" -> "t4a" [headlabel="in1", sametail=x1, labeldistance=1, labelangle=90];
+	"t3by" -> "t4b" [headlabel="in1", sametail=x1, labelangle=30];
+	
+	edge [style=bold];
+	"t2xOUT" -> "t4a" [headlabel="in2", constraint=false];
+	"t2xOUT" -> "t4b" [headlabel="in2", constraint=false, labeldistance=1, labelangle=-90];
+	
+
+//	"t1b" -> "t2" [taillabel="out2", headlabel="in2", color=blue, fontcolor=blue, fontsize=10, labeldistance=2.5, labelangle=-20];
+//	"t1a" -> "t2" [taillabel="out1", headlabel="in1", color=red, fontcolor=red, fontsize=10, labeldistance=2.5, labelangle=20];
+
+	"t4a" -> "STOP" [style=invis];
+	"t4b" -> "STOP" [style=invis];
+}
+

@@ -1,0 +1,24 @@
+digraph G {
+	node [label="\N", ordering=out];
+	graph [rankdir="LR", label=<<U><I>parallel</I></U>>, labelloc=t, nodesep=.9];
+	
+	"START" [label="", shape=plaintext];
+	"STOP" [label="", shape=plaintext];
+	
+	"t1a" [label="t1/BL(in=a)", color=red, fontcolor=red];
+	"t1b" [label="t1/B.b(in=b)", color=blue, fontcolor=blue];
+	"t2a" [label="t2/BL", color=red, fontcolor=red];
+	"t2b" [label="t2/B.b", color=blue, fontcolor=blue];
+
+	"START" -> "t1a" [style=invis];
+	"START" -> "t1b" [style=invis];
+
+	"t1b" -> "t2b" [taillabel="out2", headlabel="in2", color=blue, fontcolor=blue, fontsize=10, labeldistance=1.75, labelangle=-30];
+	"t1b" -> "t2b" [taillabel="out1", headlabel="in1", color=blue, fontcolor=blue, fontsize=10, labeldistance=1.75, labelangle=30];
+	"t1a" -> "t2a" [taillabel="out2", headlabel="in2", color=red, fontcolor=red, fontsize=10, labeldistance=1.75, labelangle=-30];
+	"t1a" -> "t2a" [taillabel="out1", headlabel="in1", color=red, fontcolor=red, fontsize=10, labeldistance=1.75, labelangle=30];
+
+	"t2a" -> "STOP" [style=invis];
+	"t2b" -> "STOP" [style=invis];
+}
+
