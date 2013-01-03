@@ -1,8 +1,8 @@
 # ducttape: A Crash Course
 ### [Nathan Schneider](http://nathan.cl)
-### 2012-12-22
+### 2012-01-03
 
-This is a tutorial for **[ducttape](https://github.com/jhclark/ducttape/)**, a workflow management tool by [Jonathan Clark](http://www.cs.cmu.edu/~jhclark/). Parts are based on his [original tutorial](https://github.com/jhclark/ducttape/blob/master/tutorial/TUTORIAL.html).
+This is a tutorial for **[ducttape](https://github.com/jhclark/ducttape/)**, a workflow management tool by [Jonathan Clark](http://www.cs.cmu.edu/~jhclark/). Parts are based on his [original tutorial](https://github.com/jhclark/ducttape/blob/master/tutorial/TUTORIAL.md).
 
 Cat pictures are from the Internet.
 
@@ -19,13 +19,13 @@ motivation blah blah
 * [2. HyperWorkflows: Branching and Plans](tutorial2.html) [draft]
 * [3. Submitters](tutorial3.html) [TODO. wait until syntax stabilizes?]
 * [4. Versioning & Packages](tutorial4.html) [TODO]
-* [5. Grab Bag](tutorial5.html) [TODO]
+* [5. Grab Bag](tutorial5.html) [partial draft]
   - config files
   - directives
   - shorthand variable references
-  - sequence branch points
-  - branch grafting
-  - nested branch points
+  - ✓ sequence branch points
+  - ✓ branch grafting
+  - ✓ nested branch points
   - the flat directory structure
   - the attic
 * [6. Advanced Example](tutorial6.html) [TODO]
