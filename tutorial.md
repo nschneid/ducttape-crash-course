@@ -15,23 +15,14 @@ motivation blah blah
 ## Contents
 
 * _[Installation](https://github.com/jhclark/ducttape/blob/master/README.md#quick-start)_
-* [1. Simple Workflows: Tasks and Dependencies](tutorial1.html) [draft]
-* [2. HyperWorkflows: Branching and Plans](tutorial2.html) [draft]
+* [1. Simple Workflows: Tasks and Dependencies](tutorial1.html) **[draft]**
+* [2. HyperWorkflows: Branching and Plans](tutorial2.html) **[draft]**
 * [3. Submitters](tutorial3.html) [TODO. wait until syntax stabilizes?]
 * [4. Versioning & Packages](tutorial4.html) [TODO]
-* [5. Grab Bag](tutorial5.html) [partial draft]
-  - config files
-  - directives
-  - shorthand variable references
-  - ✓ sequence branch points
-  - ✓ branch grafting
-  - ✓ nested branch points
-  - the flat directory structure
-  - the attic
+* [5. Grab Bag](tutorial5.html) **[draft]**
 * [6. Advanced Example](tutorial6.html) [TODO]
   - a preprocessing pipeline that can be run with different starting/ending points, in a scheduler?
 * [7. Reference: Command Line Interface](tutorial7.html) [TODO]
-* [8. Reference: Directives](tutorial8.html) [TODO]
 * Maybe: a section on modifying workflows after they've been run, including use of `invalidate` and `mark_valid`. What kinds of changes can ducttape cope with? Which changes would screw things up?
   - OK: adding new tasks that are not ancestors of current tasks; adding new branches after existing ones; adding new branch points where the first branch reflects current behavior; adding/modifying/removing plans
   - Bad: renaming a task—it is treated as an entirely new task; removing branch points/branches that have been executed; changing whether an existing task is associated with an existing branch point

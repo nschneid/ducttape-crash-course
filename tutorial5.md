@@ -5,12 +5,53 @@
 
 This section addresses miscellaneous ducttape features that may prove useful.
 
-### 
-    config files
-    directives
-    shorthand variable references
-    the flat directory structure
-    the attic
+### External config files
+
+Global variables may be defined in a __configuration file__ that is separate from the workflow file. This allows a configuration file to be used with multiple workflows. 
+
+The configuration file should consist of a `global` block (see [section 1](tutorial1.html)). Simply pass the path to the configuration file with the `-C` option when invoking ducttape at the command line.
+
+### Directives
+
+A few global variables are reserved as __directives__, offering additional control over ducttape's behavior.
+
+* `ducttape_output`: Output directory for the workflow. (command-line option: `-O`)
+* `ducttape_structure`: Structure within the output directory. `hyper` (default) creates realization directories under task directories; `flat` creates only task directories, assuming a simple (non-hyper)workflow.
+* `ducttape_unused_vars`: What should we do when we detect an unused variable? Values: `ignore|warn|error` (default: `warn`)
+* `ducttape_undeclared_vars`: What should we do when we detect an undeclared variable? Values: `ignore|warn|error` (default: `warn`)
+* `ducttape_experimental_imports`: Enable imports. Syntax and semantics are subject to change. 
+* `ducttape_experimental_packages`: We are planning on making minor changes to the package syntax in a future release. 
+* `ducttape_experimental_submitters`: We are planning on making significant changes to the submitter syntax in a future release.
+
+### The Attic
+
+Partial output or invalidated output from previous runs is relegated to the __Attic__: that is, it gets moved to a numbered directory under the output directory for a realization.[^fnattic] This may help prevent accidental deletion of data and can help diagnose issues if tasks fail repeatedly. The attic directory number (workflow version) is incremented every time the workflow is executed.
+
+[^fnattic]: Or task, with the directive `ducttape_structure=flat`.
+
+### Shorthand variable references
+
+Within the task header, the name of a nonlocal variable on the right-hand side of an assignment can be omitted if it is the same as the name of the local variable being assigned to:
+
+```
+# variable from another task
+task prev :: a=42 {
+  echo ${a}
+}
+task next :: a=@prev { # short for a=$a@prev
+  echo ${a}
+}
+
+# global variable
+global {
+     foo="hello, world"
+}
+task hello :: foo=@ { # short for foo=$foo
+     echo ${foo}
+}
+
+
+```
 
 ### Sequence branch points
 
