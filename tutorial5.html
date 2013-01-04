@@ -156,13 +156,50 @@ pre code {
 
 <p>This section addresses miscellaneous ducttape features that may prove useful.</p>
 
-<h3></h3>
+<h3>External config files</h3>
 
-<pre><code>config files
-directives
-shorthand variable references
-the flat directory structure
-the attic
+<p>Global variables may be defined in a <strong>configuration file</strong> that is separate from the workflow file. This allows a configuration file to be used with multiple workflows.</p>
+
+<p>The configuration file should consist of a <code>global</code> block (see <a href="tutorial1.html">section 1</a>). Simply pass the path to the configuration file with the <code>-C</code> option when invoking ducttape at the command line.</p>
+
+<h3>Directives</h3>
+
+<p>A few global variables are reserved as <strong>directives</strong>, offering additional control over ducttape's behavior.</p>
+
+<ul>
+<li><code>ducttape_output</code>: Output directory for the workflow. (command-line option: <code>-O</code>)</li>
+<li><code>ducttape_structure</code>: Structure within the output directory. <code>hyper</code> (default) creates realization directories under task directories; <code>flat</code> creates only task directories, assuming a simple (non-hyper)workflow.</li>
+<li><code>ducttape_unused_vars</code>: What should we do when we detect an unused variable? Values: <code>ignore|warn|error</code> (default: <code>warn</code>)</li>
+<li><code>ducttape_undeclared_vars</code>: What should we do when we detect an undeclared variable? Values: <code>ignore|warn|error</code> (default: <code>warn</code>)</li>
+<li><code>ducttape_experimental_imports</code>: Enable imports. Syntax and semantics are subject to change.</li>
+<li><code>ducttape_experimental_packages</code>: We are planning on making minor changes to the package syntax in a future release.</li>
+<li><code>ducttape_experimental_submitters</code>: We are planning on making significant changes to the submitter syntax in a future release.</li>
+</ul>
+
+
+<h3>The Attic</h3>
+
+<p>Partial output or invalidated output from previous runs is relegated to the <strong>Attic</strong>: that is, it gets moved to a numbered directory under the output directory for a realization.<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup> This may help prevent accidental deletion of data and can help diagnose issues if tasks fail repeatedly. The attic directory number (workflow version) is incremented every time the workflow is executed.</p>
+
+<h3>Shorthand variable references</h3>
+
+<p>Within the task header, the name of a nonlocal variable on the right-hand side of an assignment can be omitted if it is the same as the name of the local variable being assigned to:</p>
+
+<pre><code># variable from another task
+task prev :: a=42 {
+  echo ${a}
+}
+task next :: a=@prev { # short for a=$a@prev
+  echo ${a}
+}
+
+# global variable
+global {
+     foo="hello, world"
+}
+task hello :: foo=@ { # short for foo=$foo
+     echo ${foo}
+}
 </code></pre>
 
 <h3>Sequence branch points</h3>
@@ -208,7 +245,7 @@ the attic
 task tune &lt; in=$out@predict[DevOrTest:dev] &gt; out { … }
 </code></pre>
 
-<p>The <strong>branch grafting</strong> notation <code>[DevOrTest:dev]</code> expresses that the input from an upstream task is limited to a particular branch—the <code>dev</code> branch of the <code>DevOrTest</code> branch point. No realization of the <code>tune</code> task will be created for the <code>test</code> branch.<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup></p>
+<p>The <strong>branch grafting</strong> notation <code>[DevOrTest:dev]</code> expresses that the input from an upstream task is limited to a particular branch—the <code>dev</code> branch of the <code>DevOrTest</code> branch point. No realization of the <code>tune</code> task will be created for the <code>test</code> branch.<sup id="fnref:2"><a href="#fn:2" rel="footnote">2</a></sup></p>
 
 <h4>Advanced branch grafting</h4>
 
@@ -269,7 +306,9 @@ task t4 &lt; in1=$out@t3[B:b,X:y] in2=$out@t2[X:x] :: Q=(B: a b) { … }
 <hr/>
 <ol>
 <li id="fn:1">
-<p>This use case of restricting the paths followed could also be accomplished with a plan, though this is not true of all uses of branch grafting.<a href="#fnref:1" rev="footnote">&#8617;</a></p></li>
+<p>Or task, with the directive <code>ducttape_structure=flat</code>.<a href="#fnref:1" rev="footnote">&#8617;</a></p></li>
+<li id="fn:2">
+<p>This use case of restricting the paths followed could also be accomplished with a plan, though this is not true of all uses of branch grafting.<a href="#fnref:2" rev="footnote">&#8617;</a></p></li>
 </ol>
 </div>
 
