@@ -1,6 +1,6 @@
 # ducttape: A Crash Course
 ### [Nathan Schneider](http://nathan.cl)
-### 2012-01-03
+### 2012-01-09
 
 This is a tutorial for **[ducttape](https://github.com/jhclark/ducttape/)**, a workflow management tool by [Jonathan Clark](http://www.cs.cmu.edu/~jhclark/). Parts are based on his [original tutorial](https://github.com/jhclark/ducttape/blob/master/tutorial/TUTORIAL.md). It was created with the [Mou](http://mouapp.com/) editor; Markdown and [Graphviz](http://www.graphviz.org/) dot sources are [on GitHub](https://github.com/nschneid/ducttape-crash-course).
 
