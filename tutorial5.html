@@ -295,11 +295,52 @@ task t4 &lt; in1=$out@t3[B:b,X:y] in2=$out@t2[X:x] :: Q=(B: a b) { … }
 
 <p>TODO: advanced branch grafts example in next section</p>
 
-<p>TODO: interaction b/w grafting and nesting of branch points?</p>
+<h3>Some workflow design patterns</h3>
 
-<p>TODO: disjunction of branches?</p>
+<h4>Complementary branch points</h4>
 
-<p>TODO: is it possible for the <code>tune</code> step to access <em>multiple</em> outputs of the eval step at once? Kind of like a reduce step?</p>
+<p>When different tasks pertain to different groupings of branches, this can be enforced with multiple branch points whose branch values are linked by grafts:</p>
+
+<pre><code>task preproc &lt; in=(Data: train=/data/train.txt dev=/data/dev.txt test=/data/test.txt) &gt; out { … }
+
+task learn &lt; in=$out@preproc[Data:train] &gt; model { … }
+
+task eval &lt; in=(EvalData: dev=$out@preproc[Data:dev] test=$out@preproc[Data:test]) model=@learn &gt; preds { … }
+</code></pre>
+
+<p>Here <code>preproc</code> is run for all three datasets, each of which is then fed into one of the two other tasks. The <code>EvalData</code> branch point is effectively a subset of the <code>Data</code> branch point.</p>
+
+<h4>Sometimes-skip tasks</h4>
+
+<p>Consider a workflow to be run for several different inputs in which some, but not all, of these inputs need to be passed through a <code>cleanup</code> task before reaching the rest of the workflow. How can we specify that the rest of the workflow should use the output of <code>cleanup</code> for certain inputs and the original input files for others?</p>
+
+<p>Concretely: Suppose the input depends on a branch point <code>Data: a b c d</code>, and the <code>cleanup</code> step is only necessary for <code>c</code> and <code>d</code>. We can encode branch-contingent skips in the structure of the workflow, rather than forcing the body of <code>cleanup</code> to behave differently for different inputs.</p>
+
+<p>The recommended solution is for the downstream tasks to share a global input variable whose value is contingent on the branch. I.e.:</p>
+
+<pre><code>task cleanup &lt; in=(Data: a=/data/a b=/data/b c=/data/c d=/data/d) &gt; out {
+  …
+}
+global {
+  clean=(Data: a=/data/a b=/data/b c=$out@cleanup d=$out@cleanup)
+}
+task task1 &lt; in=$clean &gt; out { … }
+task task2 &lt; in=$clean &gt; out { … }
+task task3 &lt; in=$clean &gt; out { … }
+plan FinalTasks {
+  reach task1, task2, task3 via (Data: *)
+}
+</code></pre>
+
+<p>The global variables ensure that downstream tasks use the correct inputs. The <code>FinalTasks</code> plan does not ask for all realizations of <code>cleanup</code> to be run, only those that are necessary for the downstream tasks.</p>
+
+<p>This principle also holds if the input to the sometimes-optional step is the output from an earlier task.</p>
+
+<h4>Combining outputs across all realizations of a task as input to a single realization of another task</h4>
+
+<p>For example, if a training task is run with several different parameter values (different branches), a tuning task might wish to consider all the trained models to choose the best one, in a sort of <a href="https://en.wikipedia.org/wiki/Reduce_%28higher-order_function%29">reduce</a> step.</p>
+
+<p>This is not currently supported by ducttape, but is planned with a feature called <strong>globbing</strong>.</p>
 
 <p><p style="text-align: right"><a href="tutorial6.html">6. Advanced Example &raquo;</a></p>
 <div class="footnotes">
