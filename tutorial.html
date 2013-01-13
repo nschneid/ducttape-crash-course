@@ -152,18 +152,52 @@ pre code {
 
 <h3><a href="http://nathan.cl">Nathan Schneider</a></h3>
 
-<h3>2012-01-09</h3>
+<h3>2012-01-12</h3>
 
 <p>This is a tutorial for <strong><a href="https://github.com/jhclark/ducttape/">ducttape</a></strong>, a workflow management tool by <a href="http://www.cs.cmu.edu/~jhclark/">Jonathan Clark</a>. Parts are based on his <a href="https://github.com/jhclark/ducttape/blob/master/tutorial/TUTORIAL.md">original tutorial</a>. It was created with the <a href="http://mouapp.com/">Mou</a> editor; Markdown and <a href="http://www.graphviz.org/">Graphviz</a> dot sources are <a href="https://github.com/nschneid/ducttape-crash-course">on GitHub</a>.</p>
 
 <p>Cat pictures are from the Internet.</p>
 
-<h2>Who should use ducttape?</h2>
+<h2>Is ducttape right for you?</h2>
 
 <p style="position: relative;"><img src="cats/ducttape.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
 
 
-<p>motivation blah blah</p>
+<p>Do you suffer from Bash Bookkeeping Beleaguerment? Symptoms include:</p>
+
+<ul>
+<li>wading through a jungle of scripts that perform similar or related tasks</li>
+<li>assigning insanely long filenames with all sorts of parameters in them<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup></li>
+<li>having to add experimental parameters or steps that render previous scripts &amp; data obsolete</li>
+<li>losing time to silent failures of intermediate steps</li>
+<li>sleuthing to determine the precise configurations required to replicate a result</li>
+<li>dreading having to share code with others because that would require explaining how to run it</li>
+</ul>
+
+
+<p>In a nutshell, ducttape cures these by formalizing each project as a series of modular steps, or <strong>tasks</strong>, organized in a <a href="tutorial1.html"><strong>workflow</strong></a> describing inter-task dependencies.</p>
+
+<ul>
+<li>Tasks run when they are ready (all dependencies are satisfied). If multiple tasks are ready at once they can be run in parallel.</li>
+<li>Each task specifies prerequisites, outputs, and a bash script body. Missing prerequisites, missing outputs, and failed bash commands cause a task to fail. The next time ducttape is invoked it will try again.</li>
+<li>Each task has its own output directory. The inputs and outputs use local variables, eliminating the need for long filenames or arbitrarily numbered arguments.</li>
+<li>Tasks can be submitted as jobs to a <a href="tutorial3.html">scheduler</a>, with defined runtime requirements.</li>
+</ul>
+
+
+<p><a href="tutorial2.html">Variants</a> on a workflow (e.g., for tuning parameters or running the same processing on multiple datasets) can be specified with <strong>branch points</strong>. These variants can be run side-by-side.</p>
+
+<ul>
+<li> New branches or branch points can be introduced at any time.</li>
+<li> The branch is specified in the directory hierarchy, so outputs are organized under the relevant branch.</li>
+</ul>
+
+
+<p>With <a href="tutorial4.html">version control integration</a>, each experimental result remembers which version of the code produced it.</p>
+
+<p>Open source and written in Scala, ducttape is free and runs on any machine with a Java VM.</p>
+
+<p><small>Side effects may include unexpected free time, increased productivity, and spontaneous happy dances.</small></p>
 
 <h2>Contents</h2>
 
@@ -203,5 +237,13 @@ pre code {
 
 
 <p>Sections <a href="tutorial1.html">1</a> and <a href="tutorial2.html">2</a> present the core concepts and features of ducttape. Read these first after installing ducttape on your system. The remaining sections can be consulted independently; they are in no particular order.</p>
+<div class="footnotes">
+<hr/>
+<ol>
+<li id="fn:1">
+<p>Actual example: <code>10neigh.sym.awnHeuristicScores.lp_1e-2_1e-2.vertices.indexed</code><a href="#fnref:1" rev="footnote">&#8617;</a></p></li>
+</ol>
+</div>
+
 </body>
 </html>
