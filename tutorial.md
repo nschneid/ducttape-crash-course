@@ -1,16 +1,43 @@
 # ducttape: A Crash Course
 ### [Nathan Schneider](http://nathan.cl)
-### 2012-01-09
+### 2012-01-12
 
 This is a tutorial for **[ducttape](https://github.com/jhclark/ducttape/)**, a workflow management tool by [Jonathan Clark](http://www.cs.cmu.edu/~jhclark/). Parts are based on his [original tutorial](https://github.com/jhclark/ducttape/blob/master/tutorial/TUTORIAL.md). It was created with the [Mou](http://mouapp.com/) editor; Markdown and [Graphviz](http://www.graphviz.org/) dot sources are [on GitHub](https://github.com/nschneid/ducttape-crash-course).
 
 Cat pictures are from the Internet.
 
-## Who should use ducttape?
+## Is ducttape right for you?
 
 <p style="position: relative;"><img src="cats/ducttape.jpg" style="position: absolute; left: 101%; height: 120px;" /></p>
 
-motivation blah blah
+Do you suffer from Bash Bookkeeping Beleaguerment? Symptoms include:
+
+  - wading through a jungle of scripts that perform similar or related tasks
+  - assigning insanely long filenames with all sorts of parameters in them[^fn1]
+  - having to add experimental parameters or steps that render previous scripts & data obsolete
+  - losing time to silent failures of intermediate steps
+  - sleuthing to determine the precise configurations required to replicate a result
+  - dreading having to share code with others because that would require explaining how to run it
+
+[^fn1]: Actual example: `10neigh.sym.awnHeuristicScores.lp_1e-2_1e-2.vertices.indexed`
+
+In a nutshell, ducttape cures these by formalizing each project as a series of modular steps, or __tasks__, organized in a [__workflow__](tutorial1.html) describing inter-task dependencies.
+
+ - Tasks run when they are ready (all dependencies are satisfied). If multiple tasks are ready at once they can be run in parallel.
+ - Each task specifies prerequisites, outputs, and a bash script body. Missing prerequisites, missing outputs, and failed bash commands cause a task to fail. The next time ducttape is invoked it will try again.
+ - Each task has its own output directory. The inputs and outputs use local variables, eliminating the need for long filenames or arbitrarily numbered arguments.
+ - Tasks can be submitted as jobs to a [scheduler](tutorial3.html), with defined runtime requirements.
+
+[Variants](tutorial2.html) on a workflow (e.g., for tuning parameters or running the same processing on multiple datasets) can be specified with __branch points__. These variants can be run side-by-side.
+
+   * New branches or branch points can be introduced at any time.
+   * The branch is specified in the directory hierarchy, so outputs are organized under the relevant branch.
+
+With [version control integration](tutorial4.html), each experimental result remembers which version of the code produced it.
+
+Open source and written in Scala, ducttape is free and runs on any machine with a Java VM.
+
+<small>Side effects may include unexpected free time, increased productivity, and spontaneous happy dances.</small>
 
 ## Contents
 
